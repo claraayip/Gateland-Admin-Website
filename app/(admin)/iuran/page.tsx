@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Calendar, ChevronRight, Clock, Download, FileText, HandCoins, History, ShieldCheck, TrendingUp, Wrench } from "lucide-react";
-import { IuranItemCard } from "@/components/iuran/IuranItemCard";
+import { IuranItemCard } from "./components/IuranItemCard";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -20,7 +20,6 @@ function Placeholder({ children }: { children: string }) {
 }
 
 export default function IuranPage() {
-  // Semua angka ringkasan diturunkan dari data, bukan di-hardcode seperti di HTML asli.
   const remaining = iuranSummary.periodTarget - iuranSummary.periodCollected;
   const collectedPercent = percentOf(iuranSummary.periodCollected, iuranSummary.periodTarget);
 

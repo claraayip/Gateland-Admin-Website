@@ -5,12 +5,6 @@ import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 import { cn } from "@/lib/cn";
 
-/**
- * Kerangka halaman admin. Memegang SEMUA state sidebar di satu tempat:
- *  - mobileOpen : drawer di layar < lg (dibuka dari tombol hamburger di Header)
- *  - collapsed  : mode ikon-saja di layar >= lg (tombol panel di Header)
- * Sidebar & Header hanya menerima state + callback lewat props (satu arah).
- */
 export function AdminShell({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -32,8 +26,6 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const closeMobile = useCallback(() => setMobileOpen(false), []);
   const toggleCollapsed = useCallback(() => setCollapsed((value) => !value), []);
 
-  // Selama drawer terbuka: kunci scroll, tutup dengan Esc, dan tutup otomatis
-  // jika layar diperlebar hingga breakpoint desktop.
   useEffect(() => {
     if (!mobileOpen) return;
 

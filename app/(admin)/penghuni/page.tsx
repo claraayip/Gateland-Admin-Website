@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PenghuniView } from "@/components/penghuni/PenghuniView";
+import { PenghuniView } from "./components/PenghuniView";
 import { dashboardSummary, residentTotals, residents, unitOptions } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Manajemen Data Penghuni" };

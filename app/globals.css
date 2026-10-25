@@ -5,15 +5,15 @@
  * Design tokens GateLand.
  */
 @theme {
-  --color-primary: #090580; /* Navy gelap utama */
-  --color-secondary: #46458c; /* Ungu / biru slate */
+  --color-primary: #090580; 
+  --color-secondary: #46458c;
   --color-rose: #e8a9a9;
   --color-rose-light: #f4d3d3;
 
-  --color-surface: #f4f6fc; /* latar halaman */
-  --color-ink: #1e293b; /* teks utama */
-  --color-muted: #64748b; /* teks sekunder */
-  --color-line: #e2e8f0; /* border */
+  --color-surface: #f4f6fc; 
+  --color-ink: #1e293b;
+  --color-muted: #64748b;
+  --color-line: #e2e8f0;
   --color-success: #10b981;
   --color-danger: #ef4444;
 
