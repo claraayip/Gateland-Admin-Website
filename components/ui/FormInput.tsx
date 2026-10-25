@@ -102,7 +102,7 @@ export function FormInput({
           required={required}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy(name, hint, error)}
-          className={cn(controlClass, leading && "pl-11", trailing && "pr-11", className)}
+          className={cn(controlClass, leading ? "pl-11" : undefined, trailing ? "pr-11" : undefined, className)}
           {...props}
         />
         {trailing && <span className="absolute right-2.5 flex items-center">{trailing}</span>}

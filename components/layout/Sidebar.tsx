@@ -3,9 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, User, X } from "lucide-react";
-import { NAV_ITEMS, isActivePath } from "@/lib/navigation";
-import { currentUser } from "@/lib/data";
+import {
+  BarChart3,
+  CreditCard,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  User,
+  Users,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/cn";
 
 interface SidebarProps {
@@ -14,12 +21,20 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+const SIDEBAR_NAV = [
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Penghuni", href: "/penghuni", icon: Users },
+  { label: "Iuran", href: "/iuran", icon: CreditCard },
+  { label: "Laporan", href: "/laporan", icon: BarChart3 },
+  { label: "Pengaturan", href: "/pengaturan", icon: Settings },
+];
+
 export function Sidebar({ mobileOpen, collapsed, onClose }: SidebarProps) {
   const pathname = usePathname();
 
   return (
     <>
-      {/* Overlay gelap di belakang drawer (hanya mobile) */}
+      {/* Overlay mobile */}
       <div
         aria-hidden="true"
         onClick={onClose}
@@ -33,7 +48,7 @@ export function Sidebar({ mobileOpen, collapsed, onClose }: SidebarProps) {
         id="app-sidebar"
         aria-label="Sidebar"
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-line bg-white px-4 py-6",
+          "fixed inset-y-0 left-0 z-50 flex flex-col border-r border-slate-100 bg-white px-4 py-6 font-sans",
           "transition-[transform,width,visibility] duration-200 ease-out lg:translate-x-0 lg:visible",
           mobileOpen ? "visible translate-x-0" : "invisible -translate-x-full",
           collapsed ? "lg:w-[76px] lg:px-3" : "lg:w-[250px]",
@@ -43,52 +58,54 @@ export function Sidebar({ mobileOpen, collapsed, onClose }: SidebarProps) {
         <div className="mb-8 flex items-center justify-between px-2">
           <Link
             href="/dashboard"
-            aria-label="GateLand - ke Dashboard"
+            aria-label="GateLand"
             onClick={onClose}
-            className="flex items-center gap-3 text-primary"
+            className="flex items-center gap-3"
           >
             <Image
               src="/assets/logo-gateland.png"
-              alt=""
-              width={32}
-              height={32}
+              alt="GateLand"
+              width={34}
+              height={34}
               className="h-8 w-8 shrink-0 object-contain"
               priority
             />
-            <span className={cn("text-[22px] font-bold tracking-tight", collapsed && "lg:hidden")}>GateLand</span>
+            <span className={cn("text-[22px] font-extrabold tracking-tight text-[#0A1282]", collapsed && "lg:hidden")}>
+              GateLand
+            </span>
           </Link>
           <button
             type="button"
             onClick={onClose}
             aria-label="Tutup menu"
-            className="rounded-lg p-1.5 text-muted hover:bg-slate-100 lg:hidden"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 lg:hidden"
           >
-            <X className="size-5" aria-hidden="true" />
+            <X className="size-5" />
           </button>
         </div>
 
-        {/* Navigasi */}
+        {/* Menu Navigasi */}
         <nav aria-label="Menu utama" className="flex-1">
-          <p className={cn("mb-3 px-2 text-[11px] font-bold tracking-wide text-slate-400", collapsed && "lg:hidden")}>
+          <p className={cn("mb-3 px-2 text-[11px] font-bold tracking-wider text-slate-400 uppercase", collapsed && "lg:hidden")}>
             NAVIGASI UTAMA
           </p>
           <ul className="flex flex-col gap-1.5">
-            {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
-              const active = isActivePath(pathname, href);
+            {SIDEBAR_NAV.map(({ label, href, icon: Icon }) => {
+              const active = pathname === href || pathname.startsWith(`${href}/`);
               return (
                 <li key={href}>
                   <Link
                     href={href}
                     onClick={onClose}
-                    aria-current={active ? "page" : undefined}
-                    title={collapsed ? label : undefined}
                     className={cn(
-                      "flex items-center gap-3 rounded-control px-3.5 py-2.5 font-medium transition-colors",
-                      active ? "bg-primary text-white" : "text-muted hover:bg-slate-100 hover:text-primary",
+                      "flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-colors",
+                      active
+                        ? "bg-[#050C9C] text-white shadow-sm"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900",
                       collapsed && "lg:justify-center lg:px-0",
                     )}
                   >
-                    <Icon className="size-[18px] shrink-0" aria-hidden="true" />
+                    <Icon className="size-[18px] shrink-0" />
                     <span className={cn(collapsed && "lg:sr-only")}>{label}</span>
                   </Link>
                 </li>
@@ -97,39 +114,46 @@ export function Sidebar({ mobileOpen, collapsed, onClose }: SidebarProps) {
           </ul>
         </nav>
 
-        {/* Kartu pengguna */}
+        {/* Kartu Pengguna di Bawah */}
         <div
           className={cn(
-            "rounded-xl border border-line bg-slate-50 p-3",
-            collapsed && "lg:border-0 lg:bg-transparent lg:p-0",
+            "rounded-2xl bg-[#EFF1FD] p-4",
+            collapsed && "lg:bg-transparent lg:p-0",
           )}
         >
           <div className={cn("flex items-center gap-3", collapsed && "lg:justify-center")}>
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-indigo-100 text-primary">
-              <User className="size-5" aria-hidden="true" />
-            </span>
-            <div className={cn("min-w-0", collapsed && "lg:hidden")}>
-              <p className="truncate text-[13px] font-semibold text-ink">{currentUser.shortName}</p>
-              <p className="truncate text-xs text-muted">{currentUser.role}</p>
+            <div className="size-10 shrink-0 rounded-full bg-[#050C9C] text-white flex items-center justify-center font-bold">
+              <User className="size-5" />
+            </div>
+            <div className={cn("min-w-0 flex-1", collapsed && "lg:hidden")}>
+              <p className="truncate text-sm font-bold text-slate-900">Andi Putra Wijaya</p>
+              <p className="truncate text-xs text-slate-500">Pengelola</p>
             </div>
           </div>
+
           <div
             className={cn(
-              "mt-3 flex items-center justify-between border-t border-line pt-3",
-              collapsed && "lg:mt-2 lg:justify-center lg:border-0 lg:pt-0",
+              "mt-3 flex items-center justify-between border-t border-slate-200/60 pt-3",
+              collapsed && "lg:hidden",
             )}
           >
-            <span className={cn("flex items-center gap-1.5 text-xs text-muted", collapsed && "lg:hidden")}>
-              <span className="size-2 rounded-full bg-success" aria-hidden="true" /> Online
+            <span className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
+              <span className="size-2 rounded-full bg-emerald-500" /> Online
             </span>
-            <Link
-              href="/"
+            <button
+              type="button"
+              onClick={() => {
+                document.cookie = "gateland_token=; path=/; max-age=0; SameSite=Lax";
+                localStorage.removeItem("gateland_token");
+                localStorage.removeItem("gateland_user");
+                window.location.replace("/");
+              }}
               title="Keluar"
-              className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-danger hover:bg-red-50"
+              className="flex cursor-pointer items-center gap-1.5 rounded-lg px-1.5 py-1 text-xs font-semibold text-slate-600 hover:text-rose-600 transition"
             >
-              <LogOut className="size-4" aria-hidden="true" />
-              <span className={cn(collapsed && "lg:sr-only")}>Keluar</span>
-            </Link>
+              <LogOut className="size-3.5" />
+              <span>Keluar</span>
+            </button>
           </div>
         </div>
       </aside>

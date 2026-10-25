@@ -8,5 +8,14 @@ import { AdminShell } from "@/components/layout/AdminShell";
  * berada di luar layout ini sehingga tidak ikut menampilkan Sidebar & Header.
  */
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  return <AdminShell>{children}</AdminShell>;
+  return (
+    <>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `if (typeof window !== "undefined" && !localStorage.getItem("gateland_token")) { window.location.replace("/"); }`,
+        }}
+      />
+      <AdminShell>{children}</AdminShell>
+    </>
+  );
 }
