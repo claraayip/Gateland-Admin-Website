@@ -6,60 +6,90 @@ export const metadata: Metadata = { title: "Login Admin" };
 
 export default function LoginPage() {
   return (
-    <main className="grid min-h-screen w-full grid-cols-1 bg-white font-display lg:grid-cols-12">
-      <section className="relative flex flex-col justify-between overflow-hidden bg-gradient-to-br from-indigo-900 via-blue-900 to-slate-900 p-8 text-white sm:p-12 lg:col-span-5 lg:p-16 xl:col-span-6">
-        <div aria-hidden="true" className="pointer-events-none absolute -top-24 -left-24 size-96 rounded-full bg-blue-500/20 blur-3xl" />
-        <div aria-hidden="true" className="pointer-events-none absolute -right-24 -bottom-24 size-96 rounded-full bg-indigo-500/20 blur-3xl" />
+    <main
+      className="min-h-screen w-full bg-white flex p-3 sm:p-5 lg:p-6"
+      style={{ fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+    >
+      {/* ===== Panel Merek Biru (Kiri) ===== */}
+      <section
+        className="hidden lg:flex w-[480px] xl:w-[530px] shrink-0 rounded-[36px] p-10 xl:p-12 flex-col justify-between shadow-2xl relative overflow-hidden"
+        style={{
+          background:
+            "radial-gradient(circle at 85% 35%, rgba(46, 92, 255, 0.45) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(20, 45, 200, 0.35) 0%, transparent 55%), linear-gradient(155deg, #050766 0%, #060B7E 35%, #0915A2 65%, #04054C 100%)",
+        }}
+      >
+        {/* Glow efek halus di latar belakang untuk variasi gradasi 3D */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-16 -left-16 size-80 rounded-full bg-blue-500/20 blur-3xl"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute top-1/2 -right-24 size-80 -translate-y-1/2 rounded-full bg-indigo-400/25 blur-3xl"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-16 -left-16 size-80 rounded-full bg-blue-600/20 blur-3xl"
+        />
 
-        <div className="relative z-10 mx-auto my-auto max-w-lg lg:mx-0">
-          <div className="mb-6 flex size-16 items-center justify-center rounded-2xl border border-white/10 bg-white/10 p-3 shadow-lg backdrop-blur-md sm:size-20">
+        {/* Bagian Atas: Logo & GateLand */}
+        <div className="relative z-10 pt-4">
+          {/* Logo Putih */}
+          <div className="w-56 h-56 xl:w-60 xl:h-60 mx-auto bg-white rounded-2xl flex items-center justify-center p-7 shadow-2xl mb-8">
             <Image
               src="/assets/logo-gateland.png"
               alt="Logo GateLand"
-              width={80}
-              height={80}
-              className="h-full w-full object-contain"
+              width={200}
+              height={200}
+              className="w-full h-full object-contain"
               priority
             />
           </div>
 
-          <div className="mb-6">
-            <span className="block text-3xl font-extrabold tracking-tight sm:text-4xl">GateLand</span>
-            <small className="text-sm font-medium tracking-wide text-indigo-200">Smart Living Starts Here</small>
+          {/* Teks GateLand & Slogan Bersih */}
+          <div className="text-center">
+            <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
+              GateLand
+            </h2>
+            <p className="text-xs sm:text-sm font-medium text-white/85 mt-2">
+              Smart Living Starts Here
+            </p>
           </div>
-
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3.5 py-1.5 text-xs font-medium text-indigo-100 backdrop-blur-md">
-            <span className="size-2 animate-pulse rounded-full bg-emerald-400" aria-hidden="true" />
-            RT 04 / RW 08 Sekar Indah
-          </div>
-
-          <h1 className="mb-4 text-2xl leading-tight font-bold sm:text-3xl lg:text-4xl">
-            Platform Manajemen Perumahan Terintegrasi
-          </h1>
-          <p className="text-sm leading-relaxed text-indigo-100/80 sm:text-base">
-            Solusi praktis untuk keterbukaan laporan keuangan, otomatisasi catatan iuran warga, dan koordinasi
-            lingkungan yang lebih teratur.
-          </p>
         </div>
 
-        <p className="relative z-10 mt-8 hidden border-t border-white/10 pt-8 text-xs text-indigo-200/60 lg:block">
-          &copy; GateLand System. All rights reserved.
-        </p>
+        {/* Bagian Bawah: Informasi Sistem */}
+        <div className="relative z-10 pb-2">
+          {/* Judul */}
+          <h1 className="text-2xl sm:text-3xl xl:text-4xl font-extrabold text-white leading-tight mb-3">
+            Sistem Informasi Manajemen<br />
+            Cluster Terpadu
+          </h1>
+
+          {/* Deskripsi */}
+          <p className="text-xs sm:text-[13px] text-white/75 leading-relaxed max-w-sm">
+            Platform operasional aman, transparan, dan realtime untuk pengawasan gerbang RFID, iuran berkala, serta pelayanan warga.
+          </p>
+        </div>
       </section>
 
-      <section className="flex items-center justify-center bg-slate-50 p-6 sm:p-12 lg:col-span-7 lg:p-16 xl:col-span-6">
-        <div className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-8 shadow-xl shadow-slate-200/50 sm:p-10">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
-            <span className="font-bold text-indigo-500" aria-hidden="true">
-              ◈
-            </span>
-            Portal Resmi Pengurus &amp; Operator
+      {/* ===== Panel Form Login (Kanan) ===== */}
+      <section className="flex-1 flex items-center justify-center p-6 sm:p-12 lg:p-16 bg-white">
+        <div className="w-full max-w-[420px]">
+          {/* Versi Mobile: Tampilkan logo kecil di atas form jika layar HP */}
+          <div className="lg:hidden mb-8 text-center">
+            <div className="size-20 mx-auto bg-white rounded-2xl flex items-center justify-center p-3 shadow-md border border-slate-100 mb-3">
+              <Image
+                src="/assets/logo-gateland.png"
+                alt="Logo GateLand"
+                width={70}
+                height={70}
+                className="w-full h-full object-contain"
+                priority
+              />
+            </div>
+            <h2 className="text-2xl font-extrabold text-slate-900">GateLand</h2>
+            <p className="text-xs text-slate-500">Smart Living Starts Here</p>
           </div>
-
-          <h2 className="mb-2 text-2xl font-bold text-slate-900">Masuk ke Akun Admin</h2>
-          <p className="mb-8 text-sm leading-relaxed text-slate-500">
-            Gunakan kredensial pengelola resmi Anda untuk mengelola kas, perizinan, dan informasi lingkungan klaster.
-          </p>
 
           <LoginForm />
         </div>

@@ -1,3 +1,6 @@
+/**
+ * Data GateLand terpadu untuk Dashboard, Penghuni, Iuran, dan Laporan.
+ */
 import type {
   ActivityItem,
   BudgetItem,
@@ -10,9 +13,9 @@ import type {
 } from "./types";
 
 export const currentUser = {
-  shortName: "Bpk. Andi Pratama",
-  role: "Pengelola GateLand",
-  welcomeName: "Admin GateLand",
+  shortName: "Andi Putra Wijaya",
+  role: "Pengelola",
+  welcomeName: "Bpk. Andi Putra Wijaya",
   location: "GateLand RT 04 / RW 08",
 };
 
@@ -21,7 +24,7 @@ export const currentUser = {
 export const dashboardSummary: DashboardSummary = {
   period: "September 2026",
   collected: 7_350_000,
-  target: 9_500_000,
+  target: 45_000_000,
   growthLabel: "+12.4% bln lalu",
   paidUnits: 67,
   totalUnits: 72,
@@ -31,26 +34,117 @@ export const dashboardSummary: DashboardSummary = {
 };
 
 export const pendingPayments: PendingPayment[] = [
-  { id: "p1", residentName: "Ibu Ghaida", unit: "Blok B4 / No. 12", postName: "Iuran Kebersihan dan Keamanan", amount: 175_000, channel: "BCA Transfer", submittedAgo: "10 menit lalu", avatarTone: "blue" },
-  { id: "p2", residentName: "Ibu Alisha Nayara", unit: "Blok A2 / No. 05", postName: "Iuran Rutin", amount: 200_000, channel: "BRI Transfer", submittedAgo: "35 menit lalu", avatarTone: "blue" },
-  { id: "p3", residentName: "Ibu Shinta Kristy", unit: "Blok C1 / No. 08", postName: "Iuran Kebersihan dan Keamanan", amount: 175_000, channel: "QRIS GateLand", submittedAgo: "1 jam lalu", avatarTone: "blue" },
-  { id: "p4", residentName: "Ibu Ratna Kartika", unit: "Blok B2 / No. 14", postName: "Iuran Kebersihan dan Keamanan", amount: 175_000, channel: "BSI Transfer", submittedAgo: "2 jam lalu", avatarTone: "pink" },
-  { id: "p5", residentName: "Ibu Azizah Pratama", unit: "Blok B4 / No. 12", postName: "Iuran Kebersihan dan Keamanan", amount: 175_000, channel: "BCA Transfer", submittedAgo: "10 menit lalu", avatarTone: "blue" },
-  { id: "p6", residentName: "Ibu Anastasya", unit: "Blok A2 / No. 05", postName: "Iuran Rutin", amount: 200_000, channel: "QRIS GateLand", submittedAgo: "35 menit lalu", avatarTone: "blue" },
-  { id: "p7", residentName: "Ibu Eka Putri", unit: "Blok C1 / No. 08", postName: "Iuran Kebersihan dan Keamanan", amount: 175_000, channel: "QRIS GateLand", submittedAgo: "1 jam lalu", avatarTone: "blue" },
+  {
+    id: "p1",
+    residentName: "Ibu Azizah Pratama",
+    unit: "Blok B4 / No. 12",
+    postName: "Iuran Kebersihan dan Keamanan",
+    amount: 175_000,
+    channel: "BCA Transfer",
+    submittedAgo: "September 2026",
+    avatarTone: "blue",
+  },
+  {
+    id: "p2",
+    residentName: "Ibu Rahayu Eka",
+    unit: "Blok A2 / No. 05",
+    postName: "Iuran Rutin",
+    amount: 200_000,
+    channel: "BRI Transfer",
+    submittedAgo: "September 2026",
+    avatarTone: "blue",
+  },
+  {
+    id: "p3",
+    residentName: "Ibu Shinta Kristy",
+    unit: "Blok C1 / No. 08",
+    postName: "Iuran Kebersihan dan Keamanan",
+    amount: 175_000,
+    channel: "QRIS GateLand",
+    submittedAgo: "September 2026",
+    avatarTone: "blue",
+  },
+  {
+    id: "p4",
+    residentName: "Ibu Ratna Kartika",
+    unit: "Blok B2 / No. 14",
+    postName: "Iuran Kebersihan dan Keamanan",
+    amount: 175_000,
+    channel: "BSI Transfer",
+    submittedAgo: "September 2026",
+    avatarTone: "pink",
+  },
 ];
 
 export const activities: ActivityItem[] = [
-  { id: "a1", kind: "approved", title: "Iuran Kas RT Disetujui", description: "Ibu Maya (A1/04) kuitansi resmi otomatis terkirim.", meta: "14:40 WIB • oleh Bpk. Bambang" },
-  { id: "a2", kind: "reminder", title: "Pengingat Tagihan Otomatis", description: "WhatsApp bot berhasil menjangkau 8 nomor kepala keluarga.", meta: "11:00 WIB • Sistem GateLand" },
-  { id: "a3", kind: "new-resident", title: "Warga Baru Terdaftar", description: "Bpk. Dimas Pratama (Blok D1/02) telah mengaktifkan akun mobile.", meta: "09:15 WIB • Mandiri" },
-  { id: "a4", kind: "announcement", title: "Pengumuman Terbit", description: "\"Jadwal Penjemputan Sampah Daur Ulang Setiap Kamis Pagi\"", meta: "Kemarin, 19:30 WIB" },
+  {
+    id: "a1",
+    kind: "approved",
+    title: "Iuran Kas RT Disetujui",
+    description: "Ibu Maya (A1/04) kwitansi resmi otomatis terkirim.",
+    meta: "14:40 WIB • oleh Bpk. Bambang",
+  },
+  {
+    id: "a2",
+    kind: "reminder",
+    title: "Pengingat Tagihan Otomatis",
+    description: "WhatsApp bot berhasil menjangkau 8 nomor kepala keluarga.",
+    meta: "11:00 WIB • Sistem GateLand",
+  },
+  {
+    id: "a3",
+    kind: "new-resident",
+    title: "Warga Baru Terdaftar",
+    description: "Bpk. Dimas Pratama (Blok D1/02) telah mengaktifkan akun mobile.",
+    meta: "09:15 WIB • Mandiri",
+  },
+  {
+    id: "a4",
+    kind: "new-resident",
+    title: "Warga Baru Terdaftar",
+    description: "Bpk. Dimas Pratama (Blok D1/02) telah mengaktifkan akun mobile.",
+    meta: "09:15 WIB • Mandiri",
+  },
+  {
+    id: "a5",
+    kind: "announcement",
+    title: "Pengumuman Terbit",
+    description: '"Jadwal Penjemputan Sampah Daur Ulang Setiap Kamis Pagi".',
+    meta: "Kemarin, 19:30 WIB",
+  },
 ];
 
 export const budgetItems: BudgetItem[] = [
-  { id: "b1", name: "Keamanan & Satpam Pos", description: "Honor 2 personel, shift siang & malam", amount: 7_000_000, share: 45, tone: "primary", statusLabel: "Terbayar Terjadwal (Tgl 25)", statusTone: "green" },
-  { id: "b2", name: "Kebersihan & Angkut Sampah", description: "Retribusi armada sampah 3× seminggu & taman RT", amount: 6_000_000, share: 35, tone: "secondary", statusLabel: "Tercukupi Penuh", statusTone: "purple" },
-  { id: "b3", name: "Dana Sosial & Perawatan", description: "Lampu jalan, santunan warga, kas cadangan", amount: 2_000_000, share: 20, tone: "rose", statusLabel: "Masuk Kas Abadi", statusTone: "pink" },
+  {
+    id: "b1",
+    name: "Keamanan & Satpam Pos",
+    description: "Honor 2 personel, shift siang & malam",
+    amount: 7_000_000,
+    share: 45,
+    tone: "primary",
+    statusLabel: "Terbayar Terjadwal (Tgl 25)",
+    statusTone: "green",
+  },
+  {
+    id: "b2",
+    name: "Kebersihan & Angkut Sampah",
+    description: "Retribusi armada sampah 3x seminggu & taman RT",
+    amount: 6_000_000,
+    share: 35,
+    tone: "secondary",
+    statusLabel: "Tercukupi Penuh",
+    statusTone: "purple",
+  },
+  {
+    id: "b3",
+    name: "Dana Sosial & Perawatan",
+    description: "Lampu jalan, santunan warga, kas cadangan",
+    amount: 2_000_000,
+    share: 20,
+    tone: "rose",
+    statusLabel: "Masuk Kas Abadi",
+    statusTone: "pink",
+  },
 ];
 
 /* ======================= PENGHUNI ======================= */
@@ -116,7 +210,6 @@ export const residents: Resident[] = [
   },
 ];
 
-/** Opsi unit untuk form "Tambah Penghuni" (value: "<blok>-<nomor>"). */
 export const unitOptions = [
   { value: "A1-07", label: "Blok A1 No. 07 – Jl. Sekar Indah" },
   { value: "A2-05", label: "Blok A2 No. 05 – Jl. Sekar Indah" },
@@ -186,11 +279,6 @@ export const iuranPosts: IuranPost[] = [
 ];
 
 /* ======================= LAPORAN ======================= */
-/*
- * CATATAN: laporan.html di repo masih berisi konflik merge (HEAD vs origin/main).
- * Data di bawah memakai sisi origin/main (angka Rp 42.850.000 & 150 KK, selaras
- * dengan halaman Iuran). Ganti di sini bila versi HEAD yang benar.
- */
 
 export const laporanSummary = {
   period: "September 2026",
