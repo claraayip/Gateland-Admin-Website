@@ -19,15 +19,6 @@ interface DashboardViewProps {
   location: string;
 }
 
-/**
- * Ganti dari toggle.js:
- *
- *   function toggleDetailedView() {
- *     overview.style.display = ...; detailed.style.display = ...;   // manipulasi DOM
- *   }
- *
- * menjadi satu state boolean. React yang menentukan bagian mana yang dirender.
- */
 export function DashboardView({ summary, payments, activities, budget, welcomeName, location }: DashboardViewProps) {
   const [isDetailed, setIsDetailed] = useState(false);
   const toggleDetailedView = useCallback(() => setIsDetailed((value) => !value), []);
@@ -39,7 +30,6 @@ export function DashboardView({ summary, payments, activities, budget, welcomeNa
     (id: string, decision: Decision) => {
       const target = pending.find((payment) => payment.id === id);
       if (!target) return;
-      // TODO: panggil API verifikasi di sini; saat ini hanya memperbarui state lokal.
       setPending((list) => list.filter((payment) => payment.id !== id));
       setNotice(`Pembayaran ${target.residentName} ${decision === "approved" ? "disetujui" : "ditolak"}.`);
     },
@@ -125,7 +115,6 @@ export function DashboardView({ summary, payments, activities, budget, welcomeNa
         </StatCard>
       </section>
 
-      {/* Verifikasi + aktivitas */}
       <section className="grid items-start gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div>
           {liveRegion}

@@ -42,7 +42,6 @@ export function AddResidentModal({ open, onClose, onSubmit, unitOptions }: AddRe
         </>
       }
     >
-      {/* Modal di-unmount saat tertutup, jadi form otomatis kosong setiap dibuka. */}
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-4">
         <FormSection variant="plain" marker="A" title="Identitas Kepala Keluarga (Akun Warga)" subtitle="* Wajib diisi">
           <div className="grid gap-4 sm:grid-cols-2">

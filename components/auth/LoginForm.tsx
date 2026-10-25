@@ -13,8 +13,7 @@ export function LoginForm() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // TODO: ganti dengan autentikasi sungguhan (Auth.js, Server Action, dsb.).
-    // Versi HTML asli juga hanya mengalihkan ke dashboard tanpa validasi.
+  
     router.push("/dashboard");
   }
 

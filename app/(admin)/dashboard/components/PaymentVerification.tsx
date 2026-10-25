@@ -113,7 +113,6 @@ export function PaymentVerification({ payments, detailed, onToggleDetailed, onDe
     { key: "tunggakan", label: "Tunggakan" },
   ];
 
-  // Hanya tab "Perlu Tindakan" yang punya data di contoh ini.
   const filtered = filter === "perlu-tindakan" ? payments : [];
   const rows = detailed ? filtered : filtered.slice(0, OVERVIEW_ROWS);
 

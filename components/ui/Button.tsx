@@ -26,7 +26,6 @@ interface StyleOptions {
   className?: string;
 }
 
-/** Dipakai bersama oleh <Button> dan <ButtonLink> agar tampilannya identik. */
 export function buttonClasses({ variant = "primary", size = "md", className }: StyleOptions = {}) {
   return cn(base, variants[variant], sizes[size], className);
 }

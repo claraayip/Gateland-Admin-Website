@@ -1,21 +1,15 @@
 @import "tailwindcss";
 
-/*
- * Design tokens GateLand.
- * Dipindahkan dari :root di dashboard.css ke theme Tailwind v4 (CSS-first),
- * sehingga otomatis tersedia sebagai utility: bg-primary, text-muted,
- * border-line, rounded-card, shadow-card, dst.
- */
 @theme {
-  --color-primary: #090580; /* Navy gelap utama */
-  --color-secondary: #46458c; /* Ungu / biru slate */
+  --color-primary: #090580; 
+  --color-secondary: #46458c;
   --color-rose: #e8a9a9;
   --color-rose-light: #f4d3d3;
 
-  --color-surface: #f4f6fc; /* latar halaman */
-  --color-ink: #1e293b; /* teks utama */
-  --color-muted: #64748b; /* teks sekunder */
-  --color-line: #e2e8f0; /* border */
+  --color-surface: #f4f6fc; 
+  --color-ink: #1e293b;
+  --color-muted: #64748b;
+  --color-line: #e2e8f0;
   --color-success: #10b981;
   --color-danger: #ef4444;
 
@@ -25,7 +19,6 @@
   --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(15 23 42 / 0.04);
 }
 
-/* Font dimuat lewat next/font di app/layout.tsx (variabel CSS --font-inter & --font-poppins). */
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-poppins), var(--font-inter), ui-sans-serif, system-ui, sans-serif;

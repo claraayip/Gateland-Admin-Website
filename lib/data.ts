@@ -1,8 +1,3 @@
-/**
- * Data contoh (mock) yang dipindahkan dari HTML statis.
- * Nanti ganti isi fungsi get* di bawah dengan fetch ke API/database;
- * halaman (Server Component) tidak perlu diubah.
- */
 import type {
   ActivityItem,
   BudgetItem,

@@ -3,7 +3,6 @@ import { cn } from "@/lib/cn";
 export interface ChoiceOption {
   value: string;
   label: string;
-  /** Hanya untuk variant "card". */
   title?: string;
   description?: string;
 }
@@ -15,15 +14,9 @@ interface ChoiceGroupProps {
   defaultValue: string;
   variant?: "chip" | "card";
   required?: boolean;
-  /** Kelas grid untuk variant "card", mis. "sm:grid-cols-3". */
   columnsClassName?: string;
 }
 
-/**
- * Radio group bergaya chip/kartu.
- * Menggantikan script asli yang menambah/menghapus class `.active` secara manual:
- * state "terpilih" cukup dari radio native + variant `has-checked`, tanpa useState.
- */
 export function ChoiceGroup({
   name,
   legend,

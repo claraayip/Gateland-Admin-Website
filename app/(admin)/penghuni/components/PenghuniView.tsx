@@ -48,7 +48,6 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
   const [query, setQuery] = useState("");
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
 
-  // Pengganti penanda `.active` + addEventListener di script inline penghuni.html
   const [addOpen, setAddOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -75,7 +74,6 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
     const text = (key: string) => String(form.get(key) ?? "").trim();
     const [block = "", number = ""] = text("unit").split("-");
 
-    // TODO: kirim ke API; saat ini hanya menambah ke state lokal.
     const created: Resident = {
       id: `r-${Date.now()}`,
       name: text("name"),

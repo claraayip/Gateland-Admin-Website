@@ -7,7 +7,6 @@ import { formatRupiah, percentOf } from "@/lib/format";
 import type { IuranIcon, IuranPost } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
-// Data hanya menyimpan kunci string (bisa diserialisasi); komponen ikon dipetakan di sini.
 const postIcons: Record<IuranIcon, LucideIcon> = {
   trash: Trash2,
   shield: Shield,

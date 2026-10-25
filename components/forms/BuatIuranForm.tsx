@@ -29,7 +29,6 @@ export function BuatIuranForm() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const payload = { ...Object.fromEntries(new FormData(event.currentTarget)), scheme, amount };
-    // TODO: kirim `payload` ke API (Server Action / route handler).
     console.info("Iuran baru:", payload);
     router.push("/iuran");
   }
