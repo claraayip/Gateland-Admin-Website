@@ -5,21 +5,20 @@ import { CircleCheck, Receipt, Wallet } from "lucide-react";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { StatCard } from "@/components/ui/StatCard";
 import { ActivityTimeline } from "./ActivityTimeline";
-import { BudgetAllocation } from "./BudgetAllocation";
+import { AnnouncementHistoryCard } from "./AnnouncementHistoryCard";
 import { PaymentVerification, type Decision } from "./PaymentVerification";
 import { formatRupiah, percentOf } from "@/lib/format";
-import type { ActivityItem, BudgetItem, DashboardSummary, PendingPayment } from "@/lib/types";
+import type { ActivityItem, DashboardSummary, PendingPayment } from "@/lib/types";
 
 interface DashboardViewProps {
   summary: DashboardSummary;
   payments: PendingPayment[];
   activities: ActivityItem[];
-  budget: BudgetItem[];
   welcomeName: string;
   location: string;
 }
 
-export function DashboardView({ summary, payments, activities, budget, welcomeName, location }: DashboardViewProps) {
+export function DashboardView({ summary, payments, activities, welcomeName, location }: DashboardViewProps) {
   const [isDetailed, setIsDetailed] = useState(false);
   const toggleDetailedView = useCallback(() => setIsDetailed((value) => !value), []);
 
@@ -123,7 +122,7 @@ export function DashboardView({ summary, payments, activities, budget, welcomeNa
         <ActivityTimeline items={activities} />
       </section>
 
-      <BudgetAllocation items={budget} period={summary.period} />
+      <AnnouncementHistoryCard />
     </div>
   );
 }

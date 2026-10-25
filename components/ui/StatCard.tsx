@@ -18,11 +18,11 @@ interface StatCardProps {
   hint?: string;
   icon: LucideIcon;
   tone?: StatTone;
-  /** Kartu gelap (mis. "Total Kas") */
+
   inverted?: boolean;
   valueClassName?: string;
   className?: string;
-  /** Konten tambahan di bawah angka: progress bar, footer, dll. */
+
   children?: ReactNode;
 }
 

@@ -18,7 +18,6 @@ interface TableProps<T> {
   className?: string;
 }
 
-/** Tabel generik bertipe: definisikan kolom sekali, pakai untuk data apa pun. */
 export function Table<T>({
   columns,
   rows,

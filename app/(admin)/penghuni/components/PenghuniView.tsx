@@ -202,7 +202,6 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
         </p>
       )}
 
-      {/* Toolbar filter */}
       <Card className="flex flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
         <div role="group" aria-label="Filter penghuni" className="flex flex-wrap gap-2">
           <button
@@ -251,7 +250,6 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
         </div>
       </Card>
 
-      {/* Tabel */}
       <Card>
         <div className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div className="flex flex-wrap items-center gap-3">

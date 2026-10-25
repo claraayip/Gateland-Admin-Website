@@ -10,9 +10,9 @@ import type {
 } from "./types";
 
 export const currentUser = {
-  shortName: "Bpk. Bambang P.",
-  role: "Ketua RT 04 / RW 08",
-  welcomeName: "Bpk. Andi Putra Wijaya",
+  shortName: "Bpk. Andi Pratama",
+  role: "Pengelola GateLand",
+  welcomeName: "Admin GateLand",
   location: "GateLand RT 04 / RW 08",
 };
 
@@ -217,3 +217,128 @@ export const transactions: Transaction[] = [
   { id: "KWT/2026/09/OUT-841", date: "22 Sep 2026, 14:10", description: "Penggantian 6 Unit Lampu LED Sorot PJU Blok B3", post: "Listrik & Fasilitas Umum", account: "Petty Cash Tunai RT", amount: -1_150_000, verification: "Sah (Biro Fin)" },
   { id: "KWT/2026/09/OUT-840", date: "18 Sep 2026, 10:30", description: "Pembayaran Termin 1 Kontrak Truk Sampah DLH", post: "Kebersihan Lingkungan", account: "BCA Rekening Kas RT", amount: -3_750_000, verification: "Sah (Biro Fin)" },
 ];
+
+/* ======================= HELPER MUTASI DATA IURAN ======================= */
+
+export function addIuranPost(newPostData: {
+  namaIuran: string;
+  nominal: number;
+  tipe_iuran: string;
+  uraian?: string;
+  jatuhTempoTanggal: string;
+  sasaran: string;
+  selectedBlocks?: string;
+  frekuensiType: string;
+}) {
+  const newId = `i${iuranPosts.length + 1}_${Date.now()}`;
+  
+  let sasaranText = "72 KK (Semua)";
+  if (newPostData.sasaran === "dihuni") sasaranText = "72 Unit Dihuni";
+  else if (newPostData.sasaran === "blok" && newPostData.selectedBlocks) {
+    try {
+      const blocks: string[] = JSON.parse(newPostData.selectedBlocks);
+      sasaranText = `Blok ${blocks.join(", ")}`;
+    } catch {
+      sasaranText = "Pilihan Blok Tertentu";
+    }
+  }
+
+  // Format tanggal jatuh tempo menjadi ramah baca
+  let formattedJatuhTempo = newPostData.jatuhTempoTanggal;
+  if (newPostData.jatuhTempoTanggal) {
+    const d = new Date(newPostData.jatuhTempoTanggal);
+    if (!isNaN(d.getTime())) {
+      formattedJatuhTempo = `Tgl ${d.getDate()} (${d.toLocaleDateString("id-ID", { month: "short", year: "numeric" })})`;
+    }
+  }
+
+  const isWajib = newPostData.tipe_iuran === "wajib_rutin";
+
+  const newPost: IuranPost = {
+    id: newId,
+    title: newPostData.namaIuran,
+    icon: isWajib ? "shield" : "wrench",
+    accent: isWajib ? "indigo" : "rose",
+    description: newPostData.uraian || "Pos iuran baru diterbitkan oleh Admin.",
+    badges: [
+      { label: isWajib ? "Wajib" : "Insidental", tone: isWajib ? "indigo" : "rose" },
+      { label: "Aktif", tone: "green" },
+    ],
+    price: newPostData.nominal,
+    priceUnit: newPostData.frekuensiType === "sekali" ? "/ Sekali Bayar" : "/ bulan / KK",
+    active: true,
+    details: [
+      { label: "Sasaran Tagihan", value: sasaranText },
+      { label: "Jatuh Tempo", value: formattedJatuhTempo },
+      { label: "Terkumpul Bln Ini", value: "0 / 72 KK (0%)", positive: false },
+      { label: "Metode Bayar", value: "QRIS / Transfer" },
+    ],
+    actions: [
+      { label: "Edit Tarif", icon: "edit" },
+      { label: "Rincian", icon: "eye" },
+    ],
+  };
+
+  // Tambahkan ke array global iuranPosts di posisi atas
+  iuranPosts.unshift(newPost);
+}
+
+/* ======================= DATA & MUTASI PENGUMUMAN ======================= */
+
+export interface AnnouncementItem {
+  id: string;
+  category: string;
+  categoryBadge: string;
+  title: string;
+  dateMeta: string;
+  targetMeta: string;
+  readMeta: string;
+  badgeTone: "green" | "indigo" | "rose";
+}
+
+export const announcements: AnnouncementItem[] = [
+  {
+    id: "ann-1",
+    category: "Kebersihan & Lingkungan",
+    categoryBadge: "Aktif / Terbit",
+    title: "Jadwal Penjemputan Sampah Daur Ulang Setiap Kamis Pagi",
+    dateMeta: "Kemarin, 19:30 WIB • oleh Bpk. Bambang",
+    targetMeta: "Target: Semua Warga (72 KK)",
+    readMeta: "Dibaca 68 warga",
+    badgeTone: "green",
+  },
+  {
+    id: "ann-2",
+    category: "Agenda Warga",
+    categoryBadge: "Tersemat / Pinned",
+    title: "Kerja Bakti Lingkungan & Pengecatan Gapura Klaster",
+    dateMeta: "Minggu, 15 Ags 2026 • 07:00 WIB",
+    targetMeta: "Area Gapura Utama & Pos Satpam",
+    readMeta: "Dibaca 72 warga",
+    badgeTone: "indigo",
+  },
+  {
+    id: "ann-3",
+    category: "Keuangan & Iuran",
+    categoryBadge: "Jatuh Tempo: 10 September",
+    title: "Pengingat Pembayaran Iuran Bulan September 2026",
+    dateMeta: "Diterbitkan: 1 Sep 2026 • Sistem GateLand",
+    targetMeta: "142 dari 150 KK telah membayar",
+    readMeta: "Dibaca 70 warga",
+    badgeTone: "rose",
+  },
+];
+
+export function addAnnouncement(data: { judul: string; kategori: string; lokasi?: string }) {
+  const newAnn: AnnouncementItem = {
+    id: `ann-${Date.now()}`,
+    category: data.kategori.toUpperCase(),
+    categoryBadge: "Baru Terbit",
+    title: data.judul,
+    dateMeta: `Baru saja • oleh Admin`,
+    targetMeta: data.lokasi ? `Lokasi: ${data.lokasi}` : "Target: Seluruh Warga RT 04",
+    readMeta: "Dibaca 1 warga",
+    badgeTone: "indigo",
+  };
+  announcements.unshift(newAnn);
+}

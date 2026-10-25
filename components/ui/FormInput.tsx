@@ -10,12 +10,11 @@ const controlClass =
   "w-full rounded-control border border-line bg-slate-50 px-3.5 py-2.5 text-sm text-ink placeholder:text-slate-400 transition focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 aria-[invalid=true]:border-danger";
 
 interface FieldProps {
-  /** Wajib: dipakai sebagai name sekaligus id & penghubung label. */
   name: string;
   label: string;
   hint?: string;
   error?: string;
-  /** Elemen di sisi kanan label, mis. penghitung karakter. */
+
   labelTrailing?: ReactNode;
   labelClassName?: string;
   wrapperClassName?: string;
@@ -37,11 +36,11 @@ function FieldShell({
       <div className="flex items-center justify-between gap-2">
         <label htmlFor={name} className={cn("text-xs font-semibold text-ink", labelClassName)}>
           {label}
-          {required && (
+          {required ? (
             <span className="ml-0.5 text-danger" aria-hidden="true">
               *
             </span>
-          )}
+          ) : null}
         </label>
         {labelTrailing}
       </div>
@@ -50,13 +49,11 @@ function FieldShell({
         <p id={`${name}-error`} role="alert" className="text-xs text-danger">
           {error}
         </p>
-      ) : (
-        hint && (
-          <p id={`${name}-hint`} className="text-xs text-muted">
-            {hint}
-          </p>
-        )
-      )}
+      ) : hint ? (
+        <p id={`${name}-hint`} className="text-xs text-muted">
+          {hint}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -66,10 +63,8 @@ function describedBy(name: string, hint?: string, error?: string) {
   return hint ? `${name}-hint` : undefined;
 }
 
-/* ---------------- Input ---------------- */
 type InputProps = FieldProps &
   Omit<InputHTMLAttributes<HTMLInputElement>, "name"> & {
-    /** Ikon/elemen di dalam input, sisi kiri & kanan. */
     leading?: ReactNode;
     trailing?: ReactNode;
   };
@@ -82,36 +77,42 @@ export function FormInput({
   labelTrailing,
   labelClassName,
   wrapperClassName,
+  required,
   leading,
   trailing,
   className,
-  required,
   ...props
 }: InputProps) {
   return (
     <FieldShell
-      {...{ name, label, hint, error, labelTrailing, labelClassName, wrapperClassName, required }}
+      name={name}
+      label={label}
+      hint={hint}
+      error={error}
+      labelTrailing={labelTrailing}
+      labelClassName={labelClassName}
+      wrapperClassName={wrapperClassName}
+      required={required}
     >
       <div className="relative flex items-center">
-        {leading && (
+        {leading ? (
           <span className="pointer-events-none absolute left-3.5 text-slate-400">{leading}</span>
-        )}
+        ) : null}
         <input
           id={name}
           name={name}
           required={required}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy(name, hint, error)}
-          className={cn(controlClass, leading && "pl-11", trailing && "pr-11", className)}
+          className={cn(controlClass, leading ? "pl-11" : "", trailing ? "pr-11" : "", className)}
           {...props}
         />
-        {trailing && <span className="absolute right-2.5 flex items-center">{trailing}</span>}
+        {trailing ? <span className="absolute right-2.5 flex items-center">{trailing}</span> : null}
       </div>
     </FieldShell>
   );
 }
 
-/* ---------------- Textarea ---------------- */
 type TextareaProps = FieldProps & Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "name">;
 
 export function FormTextarea({
@@ -128,7 +129,14 @@ export function FormTextarea({
 }: TextareaProps) {
   return (
     <FieldShell
-      {...{ name, label, hint, error, labelTrailing, labelClassName, wrapperClassName, required }}
+      name={name}
+      label={label}
+      hint={hint}
+      error={error}
+      labelTrailing={labelTrailing}
+      labelClassName={labelClassName}
+      wrapperClassName={wrapperClassName}
+      required={required}
     >
       <textarea
         id={name}
@@ -143,7 +151,6 @@ export function FormTextarea({
   );
 }
 
-/* ---------------- Select ---------------- */
 type SelectProps = FieldProps &
   Omit<SelectHTMLAttributes<HTMLSelectElement>, "name"> & {
     options: { value: string; label: string }[];
@@ -167,7 +174,14 @@ export function FormSelect({
 }: SelectProps) {
   return (
     <FieldShell
-      {...{ name, label, hint, error, labelTrailing, labelClassName, wrapperClassName, required }}
+      name={name}
+      label={label}
+      hint={hint}
+      error={error}
+      labelTrailing={labelTrailing}
+      labelClassName={labelClassName}
+      wrapperClassName={wrapperClassName}
+      required={required}
     >
       <select
         id={name}
@@ -179,11 +193,11 @@ export function FormSelect({
         className={cn(controlClass, className)}
         {...props}
       >
-        {placeholder && (
+        {placeholder ? (
           <option value="" disabled>
             {placeholder}
           </option>
-        )}
+        ) : null}
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

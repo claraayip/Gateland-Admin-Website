@@ -1,11 +1,10 @@
 import type { InputHTMLAttributes } from "react";
 
 interface SwitchProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "role"> {
-  /** Label aksesibel, mis. "Aktifkan Iuran Kebersihan". */
+
   label: string;
 }
 
-/** Toggle on/off berbasis checkbox native (tanpa JS, bisa dipakai di Server Component). */
 export function Switch({ label, ...props }: SwitchProps) {
   return (
     <label className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center">

@@ -23,7 +23,6 @@ export function Header({ mobileOpen, collapsed, onOpenMobileMenu, onToggleCollap
 
   return (
     <header className="sticky top-0 z-30 flex items-center gap-2 border-b border-line bg-white/90 px-4 py-3 backdrop-blur sm:gap-3 sm:px-6 lg:px-8">
-      {/* Mobile: buka drawer */}
       <button
         type="button"
         onClick={onOpenMobileMenu}
@@ -35,7 +34,6 @@ export function Header({ mobileOpen, collapsed, onOpenMobileMenu, onToggleCollap
         <Menu className="size-5" aria-hidden="true" />
       </button>
 
-      {/* Desktop: ciutkan / perluas sidebar */}
       <button
         type="button"
         onClick={onToggleCollapsed}

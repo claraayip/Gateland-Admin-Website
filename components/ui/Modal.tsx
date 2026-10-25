@@ -16,11 +16,6 @@ interface ModalProps {
   size?: "md" | "lg";
 }
 
-/**
- * Dialog modal. Menggantikan pola asli:
- *   classList.add('active') + document.body.style.overflow = 'hidden'
- * Menangani: tombol Esc, klik overlay, kunci scroll body, dan mengembalikan fokus.
- */
 export function Modal({
   open,
   onClose,
@@ -35,8 +30,6 @@ export function Modal({
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Simpan onClose terbaru di ref agar effect di bawah tidak jalan ulang
-  // (dan tidak mencuri fokus dari input) saat parent re-render.
   const onCloseRef = useRef(onClose);
   useEffect(() => {
     onCloseRef.current = onClose;

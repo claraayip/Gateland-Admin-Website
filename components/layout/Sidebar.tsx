@@ -19,7 +19,6 @@ export function Sidebar({ mobileOpen, collapsed, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Overlay gelap di belakang drawer (hanya mobile) */}
       <div
         aria-hidden="true"
         onClick={onClose}
@@ -39,7 +38,6 @@ export function Sidebar({ mobileOpen, collapsed, onClose }: SidebarProps) {
           collapsed ? "lg:w-[76px] lg:px-3" : "lg:w-[250px]",
         )}
       >
-        {/* Brand */}
         <div className="mb-8 flex items-center justify-between px-2">
           <Link
             href="/dashboard"
@@ -67,7 +65,6 @@ export function Sidebar({ mobileOpen, collapsed, onClose }: SidebarProps) {
           </button>
         </div>
 
-        {/* Navigasi */}
         <nav aria-label="Menu utama" className="flex-1">
           <p className={cn("mb-3 px-2 text-[11px] font-bold tracking-wide text-slate-400", collapsed && "lg:hidden")}>
             NAVIGASI UTAMA
@@ -97,7 +94,6 @@ export function Sidebar({ mobileOpen, collapsed, onClose }: SidebarProps) {
           </ul>
         </nav>
 
-        {/* Kartu pengguna */}
         <div
           className={cn(
             "rounded-xl border border-line bg-slate-50 p-3",

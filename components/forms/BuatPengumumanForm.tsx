@@ -1,31 +1,29 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useActionState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { ChoiceGroup } from "@/components/ui/ChoiceGroup";
 import { FormInput, FormTextarea } from "@/components/ui/FormInput";
 import { FormSection } from "@/components/ui/FormSection";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { createAnnouncementAction } from "@/app/(admin)/pengumuman/buat/action";
 
 const TITLE_LIMIT = 120;
 
 export function BuatPengumumanForm() {
-  const router = useRouter();
+  const [state, formAction, isPending] = useActionState(createAnnouncementAction, {});
   const [title, setTitle] = useState("");
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const payload = Object.fromEntries(new FormData(event.currentTarget));
-    // TODO: kirim `payload` ke API. Versi asli memakai alert() lalu redirect.
-    console.info("Pengumuman:", payload);
-    router.push("/dashboard");
-  }
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form action={formAction} className="space-y-6">
+      {state?.message && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-xs font-semibold text-red-600">
+          {state.message}
+        </div>
+      )}
+
       <PageHeader
         eyebrow={
           <>
@@ -40,23 +38,28 @@ export function BuatPengumumanForm() {
             <ButtonLink href="/dashboard" variant="ghost">
               <ArrowLeft className="size-4" aria-hidden="true" /> Kembali ke Dashboard
             </ButtonLink>
-            <Button variant="outline">Simpan Draf</Button>
+            <Button variant="outline" type="button">Simpan Draf</Button>
           </>
         }
       />
 
       <FormSection marker="1" title="Detail Pengumuman">
-        <FormInput
-          name="judul"
-          label="Judul Pengumuman"
-          required
-          maxLength={TITLE_LIMIT}
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          placeholder="Contoh: Kerja Bakti Massal"
-          hint="Buat judul singkat, jelas, dan memuat tujuan utama pesan."
-          labelTrailing={<span className="text-[11px] text-muted">{title.length} / {TITLE_LIMIT} karakter</span>}
-        />
+        <div>
+          <FormInput
+            name="judul"
+            label="Judul Pengumuman"
+            required
+            maxLength={TITLE_LIMIT}
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            placeholder="Contoh: Kerja Bakti Massal"
+            hint="Buat judul singkat, jelas, dan memuat tujuan utama pesan."
+            labelTrailing={<span className="text-[11px] text-muted">{title.length} / {TITLE_LIMIT} karakter</span>}
+          />
+          {state?.errors?.judul && (
+            <p className="mt-1 text-xs font-semibold text-red-500">{state.errors.judul[0]}</p>
+          )}
+        </div>
 
         <ChoiceGroup
           name="kategori"
@@ -87,13 +90,18 @@ export function BuatPengumumanForm() {
           ]}
         />
 
-        <FormTextarea
-          name="isi"
-          label="Isi & Uraian Pengumuman"
-          required
-          rows={6}
-          placeholder={"Yth. Bapak/Ibu Warga RT 04 / RW 08,\n\nTulis isi pengumuman di sini."}
-        />
+        <div>
+          <FormTextarea
+            name="isi"
+            label="Isi & Uraian Pengumuman"
+            required
+            rows={6}
+            placeholder={"Yth. Bapak/Ibu Warga RT 04 / RW 08,\n\nTulis isi pengumuman di sini."}
+          />
+          {state?.errors?.isi && (
+            <p className="mt-1 text-xs font-semibold text-red-500">{state.errors.isi[0]}</p>
+          )}
+        </div>
 
         <FormInput
           name="lokasi"
@@ -125,8 +133,10 @@ export function BuatPengumumanForm() {
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <ButtonLink href="/dashboard" variant="outline">Batal / Kembali ke Dashboard</ButtonLink>
-        <Button variant="outline">Simpan Draf</Button>
-        <Button type="submit">Publikasikan Pengumuman</Button>
+        <Button variant="outline" type="button">Simpan Draf</Button>
+        <Button type="submit" disabled={isPending}>
+          {isPending ? "Menerbitkan..." : "Publikasikan Pengumuman"}
+        </Button>
       </div>
     </form>
   );

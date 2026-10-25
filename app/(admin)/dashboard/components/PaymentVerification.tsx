@@ -15,7 +15,6 @@ export type Decision = "approved" | "rejected";
 
 interface PaymentVerificationProps {
   payments: PendingPayment[];
-  /** false = ringkasan (4 baris, 4 kolom), true = tampilan penuh dengan aksi validasi. */
   detailed: boolean;
   onToggleDetailed: () => void;
   onDecision: (id: string, decision: Decision) => void;
@@ -79,12 +78,12 @@ function buildColumns(detailed: boolean, onDecision: PaymentVerificationProps["o
     {
       key: "time",
       header: "Waktu Masuk",
-      cell: (payment) => <span className="text-xs text-muted">{payment.submittedAgo}</span>,
+      cell: (payment: PendingPayment) => <span className="text-xs text-muted">{payment.submittedAgo}</span>,
     },
     {
       key: "actions",
       header: "Aksi Validasi",
-      cell: (payment) => (
+      cell: (payment: PendingPayment) => (
         <div className="flex items-center gap-2">
           <Button size="sm" onClick={() => onDecision(payment.id, "approved")}>
             <Check className="size-3.5" aria-hidden="true" /> Setujui
@@ -168,7 +167,6 @@ export function PaymentVerification({ payments, detailed, onToggleDetailed, onDe
         <span className="text-muted">
           Menampilkan {rows.length} pembayaran yang membutuhkan validasi manual bendahara
         </span>
-        {/* Menggantikan toggleDetailedView() dari toggle.js */}
         <button
           type="button"
           onClick={onToggleDetailed}

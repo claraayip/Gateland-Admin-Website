@@ -3,9 +3,7 @@ import type { ReactNode } from "react";
 interface PageHeaderProps {
   title: ReactNode;
   description?: string;
-  /** Baris kecil di atas judul: breadcrumb atau badge. */
   eyebrow?: ReactNode;
-  /** Tombol/aksi di sisi kanan (turun ke bawah di mobile). */
   actions?: ReactNode;
 }
 

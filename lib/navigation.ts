@@ -15,7 +15,6 @@ export interface NavItem {
   icon: LucideIcon;
 }
 
-/** Satu sumber kebenaran untuk menu sidebar. Tambah halaman baru cukup di sini. */
 export const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Penghuni", href: "/penghuni", icon: Users },
@@ -24,7 +23,6 @@ export const NAV_ITEMS: NavItem[] = [
   { label: "Pengaturan", href: "/pengaturan", icon: Settings },
 ];
 
-/** Menu aktif juga untuk sub-halaman, mis. /iuran/buat menandai "Iuran". */
 export function isActivePath(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
@@ -35,7 +33,6 @@ export interface HeaderAction {
   icon: LucideIcon;
 }
 
-/** Tombol aksi utama di Header berubah mengikuti konteks halaman. */
 export function getHeaderAction(pathname: string): HeaderAction {
   if (pathname.startsWith("/iuran")) {
     return { label: "Buat Iuran", href: "/iuran/buat", icon: Plus };

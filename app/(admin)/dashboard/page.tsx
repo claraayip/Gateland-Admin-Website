@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { DashboardView } from "./components/DashboardView";
-import { activities, budgetItems, currentUser, dashboardSummary, pendingPayments } from "@/lib/data";
+import { activities, currentUser, dashboardSummary, pendingPayments } from "@/lib/data";
 
-export const metadata: Metadata = { title: "Dashboard" };
+export const metadata: Metadata = { title: "Dashboard Admin" };
 
 export default function DashboardPage() {
   return (
@@ -10,7 +10,6 @@ export default function DashboardPage() {
       summary={dashboardSummary}
       payments={pendingPayments}
       activities={activities}
-      budget={budgetItems}
       welcomeName={currentUser.welcomeName}
       location={currentUser.location}
     />

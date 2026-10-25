@@ -4,11 +4,9 @@ import { LoginForm } from "@/components/auth/LoginForm";
 
 export const metadata: Metadata = { title: "Login Admin" };
 
-/** Landing page / login. Berada di luar route group (admin) sehingga tanpa Sidebar. */
 export default function LoginPage() {
   return (
     <main className="grid min-h-screen w-full grid-cols-1 bg-white font-display lg:grid-cols-12">
-      {/* ===== Panel merek (kiri) ===== */}
       <section className="relative flex flex-col justify-between overflow-hidden bg-gradient-to-br from-indigo-900 via-blue-900 to-slate-900 p-8 text-white sm:p-12 lg:col-span-5 lg:p-16 xl:col-span-6">
         <div aria-hidden="true" className="pointer-events-none absolute -top-24 -left-24 size-96 rounded-full bg-blue-500/20 blur-3xl" />
         <div aria-hidden="true" className="pointer-events-none absolute -right-24 -bottom-24 size-96 rounded-full bg-indigo-500/20 blur-3xl" />
@@ -49,7 +47,6 @@ export default function LoginPage() {
         </p>
       </section>
 
-      {/* ===== Panel form (kanan) ===== */}
       <section className="flex items-center justify-center bg-slate-50 p-6 sm:p-12 lg:col-span-7 lg:p-16 xl:col-span-6">
         <div className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-8 shadow-xl shadow-slate-200/50 sm:p-10">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">

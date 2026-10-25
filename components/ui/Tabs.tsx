@@ -14,11 +14,6 @@ interface TabsProps {
   label: string;
 }
 
-/**
- * Tab aksesibel (role=tablist, navigasi panah kiri/kanan).
- * `panel` boleh berisi Server Component: dirender di server, hanya
- * visibilitasnya yang dikontrol state di client.
- */
 export function Tabs({ items, label }: TabsProps) {
   const baseId = useId();
   const [activeId, setActiveId] = useState<string>(items[0].id);

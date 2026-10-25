@@ -3,12 +3,11 @@ import { Card } from "./Card";
 import { cn } from "@/lib/cn";
 
 interface FormSectionProps {
-  /** Penanda langkah/bagian: "1", "2", "A", "B", ... */
   marker: ReactNode;
   title: string;
   subtitle?: string;
   aside?: ReactNode;
-  /** "card" untuk halaman form, "plain" untuk di dalam modal. */
+
   variant?: "card" | "plain";
   children: ReactNode;
   className?: string;
