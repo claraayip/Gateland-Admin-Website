@@ -1,11 +1,5 @@
-const rupiah = new Intl.NumberFormat("id-ID", {
-  style: "currency",
-  currency: "IDR",
-  maximumFractionDigits: 0,
-});
-
 export function formatRupiah(value: number): string {
-  return rupiah.format(value).replace(/\u00a0/g, " ");
+  return `Rp${value.toLocaleString("id-ID")}`;
 }
 
 export function percentOf(part: number, total: number): number {

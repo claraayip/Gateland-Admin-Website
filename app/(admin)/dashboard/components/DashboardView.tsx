@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { CircleCheck, Receipt, Wallet } from "lucide-react";
-import { ProgressBar } from "@/components/ui/ProgressBar";
-import { StatCard } from "@/components/ui/StatCard";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Check, ClipboardList, TrendingUp, Wallet } from "lucide-react";
 import { ActivityTimeline } from "./ActivityTimeline";
 import { AnnouncementHistoryCard } from "./AnnouncementHistoryCard";
 import { PaymentVerification, type Decision } from "./PaymentVerification";
+import { BudgetDistribution } from "./BudgetDistribution";
 import { formatRupiah, percentOf } from "@/lib/format";
 import type { ActivityItem, DashboardSummary, PendingPayment } from "@/lib/types";
 
@@ -19,8 +19,19 @@ interface DashboardViewProps {
 }
 
 export function DashboardView({ summary, payments, activities, welcomeName, location }: DashboardViewProps) {
-  const [isDetailed, setIsDetailed] = useState(false);
-  const toggleDetailedView = useCallback(() => setIsDetailed((value) => !value), []);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Gunakan URL query param `?view=riwayat` agar browser back button dan klik sidebar/dashboard bekerja naturally!
+  const isDetailed = searchParams.get("view") === "riwayat";
+
+  const toggleDetailedView = useCallback(() => {
+    if (isDetailed) {
+      router.push("/dashboard");
+    } else {
+      router.push("/dashboard?view=riwayat");
+    }
+  }, [isDetailed, router]);
 
   const [pending, setPending] = useState(payments);
   const [notice, setNotice] = useState<string | null>(null);
@@ -65,55 +76,157 @@ export function DashboardView({ summary, payments, activities, welcomeName, loca
   return (
     <div className="space-y-6">
       {/* Hero */}
-      <section className="rounded-card bg-gradient-to-br from-primary to-secondary px-6 py-7 text-white shadow-[0_4px_12px_rgb(9_5_128/0.15)] sm:px-8">
-        <div className="mb-3 inline-flex items-center gap-2 rounded-xl bg-white/15 px-3 py-1 text-[11px] font-medium">
-          <span className="size-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+      <section className="rounded-2xl bg-gradient-to-r from-[#0d096b] via-[#100a78] to-[#3a3782] px-7 py-7 text-white shadow-sm sm:px-9">
+        <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1 text-[11px] font-medium backdrop-blur-sm">
+          <span className="size-2 rounded-full bg-emerald-400" aria-hidden="true" />
           Sistem Pembukuan Realtime Aktif • Periode {summary.period}
         </div>
-        <h1 className="mb-2 text-xl font-bold sm:text-[22px]">Selamat Datang Kembali, {welcomeName}</h1>
-        <p className="max-w-[900px] text-[13px] leading-relaxed text-slate-200">
+        <h1 className="mb-2 text-2xl font-bold tracking-tight sm:text-[26px]">Selamat Datang Kembali, {welcomeName}</h1>
+        <p className="max-w-[950px] text-xs leading-relaxed text-slate-200">
           Ringkasan operasional dan pembukuan iuran klaster <strong>{location}</strong>. Pantau arus kas masuk,
           verifikasi konfirmasi warga, dan kelola ketertiban lingkungan secara presisi.
         </p>
       </section>
 
-      {/* Kartu statistik */}
-      <section aria-label="Ringkasan" className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        <StatCard label="Total Iuran Terkumpul" value={formatRupiah(summary.collected)} icon={Wallet}>
-          <div className="space-y-1.5">
-            <ProgressBar value={collectedPercent} label="Iuran terkumpul" />
-            <p className="text-[11px] text-muted">Target {formatRupiah(summary.target)}</p>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-800">
-              {summary.growthLabel}
-            </span>
-            <span className="text-xs text-muted">Sisa {formatRupiah(summary.target - summary.collected)}</span>
-          </div>
-        </StatCard>
+      {/* Kartu statistik - 3 Kolom sesuai Desain UI/UX */}
+      <section aria-label="Ringkasan Statistik" className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {/* Card 1: TOTAL IURAN TERKUMPUL */}
+        <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          {/* Garis aksen vertikal kiri warna biru navy */}
+          <div className="absolute top-0 bottom-0 left-0 w-1.5 bg-[#090580]" aria-hidden="true" />
+          
+          <div>
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-bold tracking-wider text-slate-500 uppercase">
+                  TOTAL IURAN
+                </p>
+                <p className="text-[11px] font-bold tracking-wider text-slate-500 uppercase">
+                  TERKUMPUL
+                </p>
+              </div>
+              <div className="flex size-11 items-center justify-center rounded-xl bg-[#e8e9fc] text-[#090580]">
+                <Wallet className="size-5" />
+              </div>
+            </div>
 
-        <StatCard label="Status Pembayaran Lunas" value={`${summary.paidUnits} unit`} icon={CircleCheck} tone="success">
-          <div className="space-y-1.5">
-            <ProgressBar value={paidPercent} tone="success" label="Unit lunas" />
-            <p className="text-[11px] text-muted">Dari {summary.totalUnits} unit berpenghuni</p>
+            <p className="mt-3 text-[28px] font-extrabold tracking-tight text-slate-900">
+              {formatRupiah(summary.collected)}
+            </p>
           </div>
-          <p className="text-xs text-muted">{summary.qrisUnits} bayar via QRIS otomatis</p>
-        </StatCard>
 
-        <StatCard
-          label="Belum Lunas / Menunggak"
-          value={`${summary.overdueUnits} unit`}
-          valueClassName="text-danger"
-          icon={Receipt}
-          tone="danger"
-        >
-          <div className="mt-auto flex items-center justify-between">
-            <span className="text-xs text-muted">Total Nilai Tagihan</span>
-            <span className="text-base font-bold text-danger">{formatRupiah(summary.overdueAmount)}</span>
+          <div className="mt-6 space-y-4">
+            <div className="space-y-1.5">
+              <p className="text-[11px] font-medium text-slate-600">
+                Target {formatRupiah(summary.target)}
+              </p>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full bg-[#090580] transition-all duration-500"
+                  style={{ width: `${collectedPercent}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-1">
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#e7f8f0] px-2.5 py-1 text-[11px] font-bold text-[#059669]">
+                <TrendingUp className="size-3" />
+                <span>+12.4%</span>
+                <span className="font-normal text-[#059669]">bln lalu</span>
+              </span>
+              <span className="text-xs font-medium text-slate-500">
+                Sisa Rp2.150.000
+              </span>
+            </div>
           </div>
-        </StatCard>
+        </div>
+
+        {/* Card 2: STATUS PEMBAYARAN LUNAS */}
+        <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          {/* Garis aksen vertikal kiri warna hijau tua */}
+          <div className="absolute top-0 bottom-0 left-0 w-1.5 bg-[#15803d]" aria-hidden="true" />
+
+          <div>
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-bold tracking-wider text-slate-500 uppercase">
+                  STATUS
+                </p>
+                <p className="text-[11px] font-bold tracking-wider text-slate-500 uppercase">
+                  PEMBAYARAN
+                </p>
+                <p className="text-[11px] font-bold tracking-wider text-slate-500 uppercase">
+                  LUNAS
+                </p>
+              </div>
+              <div className="flex size-11 items-center justify-center rounded-xl bg-[#e3f4e9] text-[#15803d]">
+                <div className="flex size-5 items-center justify-center rounded-full bg-[#15803d] text-white">
+                  <Check className="size-3.5 stroke-[3]" />
+                </div>
+              </div>
+            </div>
+
+            <p className="mt-3 text-[28px] font-extrabold tracking-tight text-slate-900">
+              {summary.paidUnits} unit
+            </p>
+          </div>
+
+          <div className="mt-6 space-y-4">
+            <div className="space-y-1.5">
+              <p className="text-[11px] font-medium text-slate-600">
+                Dari {summary.totalUnits} unit berpenghuni
+              </p>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full bg-[#15803d] transition-all duration-500"
+                  style={{ width: `${paidPercent}%` }}
+                />
+              </div>
+            </div>
+
+            <p className="pt-1 text-xs font-medium text-slate-500">
+              {summary.qrisUnits} bayar via QRIS otomatis
+            </p>
+          </div>
+        </div>
+
+        {/* Card 3: BELUM LUNAS / MENUNGGAK */}
+        <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          {/* Garis aksen vertikal kiri warna merah marun */}
+          <div className="absolute top-0 bottom-0 left-0 w-1.5 bg-[#b91c1c]" aria-hidden="true" />
+
+          <div>
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-bold tracking-wider text-slate-500 uppercase">
+                  BELUM LUNAS /
+                </p>
+                <p className="text-[11px] font-bold tracking-wider text-slate-500 uppercase">
+                  MENUNGGAK
+                </p>
+              </div>
+              <div className="flex size-11 items-center justify-center rounded-xl bg-[#fee2e2] text-[#b91c1c]">
+                <ClipboardList className="size-5" />
+              </div>
+            </div>
+
+            <p className="mt-3 text-[28px] font-extrabold tracking-tight text-[#b91c1c]">
+              {summary.overdueUnits} unit
+            </p>
+          </div>
+
+          <div className="mt-auto pt-10">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-slate-500">Total Nilai Tagihan</span>
+              <span className="text-sm font-bold text-[#b91c1c]">
+                {formatRupiah(summary.overdueAmount)}
+              </span>
+            </div>
+          </div>
+        </div>
       </section>
 
+      {/* Tabel Verifikasi & Aktivitas */}
       <section className="grid items-start gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div>
           {liveRegion}
@@ -122,7 +235,11 @@ export function DashboardView({ summary, payments, activities, welcomeName, loca
         <ActivityTimeline items={activities} />
       </section>
 
+      {/* Riwayat Pengumuman Klaster */}
       <AnnouncementHistoryCard />
+
+      {/* Distribusi & Alokasi Anggaran Bulanan */}
+      <BudgetDistribution />
     </div>
   );
 }
