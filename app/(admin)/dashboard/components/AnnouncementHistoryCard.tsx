@@ -2,18 +2,43 @@
 
 import { useState } from "react";
 import { Megaphone, Info, SlidersHorizontal } from "lucide-react";
-import { announcements } from "@/lib/data";
+import { announcements as defaultAnnouncements, type AnnouncementItem } from "@/lib/data";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/cn";
 
-export function AnnouncementHistoryCard() {
+interface AnnouncementHistoryCardProps {
+  announcements?: AnnouncementItem[];
+}
+
+export function AnnouncementHistoryCard({
+  announcements = defaultAnnouncements,
+}: AnnouncementHistoryCardProps) {
   const [activeTab, setActiveTab] = useState("semua");
 
-  const filteredAnnouncements = announcements.filter((item) => {
+  const list = announcements && announcements.length > 0 ? announcements : defaultAnnouncements;
+
+  const filteredAnnouncements = list.filter((item) => {
     if (activeTab === "semua") return true;
-    if (activeTab === "aktif") return item.categoryBadge.includes("Aktif") || item.categoryBadge.includes("Tersemat");
-    if (activeTab === "kegiatan") return item.category.toLowerCase().includes("kegiatan") || item.category.toLowerCase().includes("agenda");
-    if (activeTab === "iuran") return item.category.toLowerCase().includes("iuran") || item.category.toLowerCase().includes("keuangan");
+    if (activeTab === "aktif") {
+      return (
+        item.categoryBadge.toLowerCase().includes("aktif") ||
+        item.categoryBadge.toLowerCase().includes("tersemat") ||
+        item.categoryBadge.toLowerCase().includes("baru") ||
+        item.categoryBadge.toLowerCase().includes("darurat")
+      );
+    }
+    if (activeTab === "kegiatan") {
+      return (
+        item.category.toLowerCase().includes("kegiatan") ||
+        item.category.toLowerCase().includes("agenda")
+      );
+    }
+    if (activeTab === "iuran") {
+      return (
+        item.category.toLowerCase().includes("iuran") ||
+        item.category.toLowerCase().includes("keuangan")
+      );
+    }
     return true;
   });
 
@@ -35,7 +60,7 @@ export function AnnouncementHistoryCard() {
 
       <div className="flex flex-wrap gap-2">
         {[
-          { id: "semua", label: `Semua (${announcements.length})` },
+          { id: "semua", label: `Semua (${list.length})` },
           { id: "aktif", label: "Aktif / Tersemat" },
           { id: "kegiatan", label: "Kegiatan" },
           { id: "iuran", label: "Iuran & Fasum" },

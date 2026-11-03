@@ -337,4 +337,13 @@ export function addAnnouncement(data: { judul: string; kategori: string; lokasi?
     badgeTone: "indigo",
   };
   announcements.unshift(newAnn);
+
+  // Tambahkan juga ke aktivitas terbaru agar langsung muncul di timeline
+  activities.unshift({
+    id: `act-${Date.now()}`,
+    kind: "announcement",
+    title: "Pengumuman Terbit",
+    description: `"${data.judul}".`,
+    meta: "Baru saja • oleh Admin",
+  });
 }

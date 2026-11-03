@@ -9,16 +9,18 @@ import { PaymentVerification, type Decision } from "./PaymentVerification";
 import { BudgetDistribution } from "./BudgetDistribution";
 import { formatRupiah, percentOf } from "@/lib/format";
 import type { ActivityItem, DashboardSummary, PendingPayment } from "@/lib/types";
+import type { AnnouncementItem } from "@/lib/data";
 
 interface DashboardViewProps {
   summary: DashboardSummary;
   payments: PendingPayment[];
   activities: ActivityItem[];
+  announcements?: AnnouncementItem[];
   welcomeName: string;
   location: string;
 }
 
-export function DashboardView({ summary, payments, activities, welcomeName, location }: DashboardViewProps) {
+export function DashboardView({ summary, payments, activities, announcements, welcomeName, location }: DashboardViewProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -236,7 +238,7 @@ export function DashboardView({ summary, payments, activities, welcomeName, loca
       </section>
 
       {/* Riwayat Pengumuman Klaster */}
-      <AnnouncementHistoryCard />
+      <AnnouncementHistoryCard announcements={announcements} />
 
       {/* Distribusi & Alokasi Anggaran Bulanan */}
       <BudgetDistribution />

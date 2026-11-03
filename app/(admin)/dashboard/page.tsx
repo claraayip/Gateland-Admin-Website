@@ -14,6 +14,7 @@ export default async function DashboardPage() {
         summary={data.summary}
         payments={data.payments}
         activities={data.activities}
+        announcements={data.announcements}
         welcomeName={data.welcomeName}
         location={data.location}
       />
