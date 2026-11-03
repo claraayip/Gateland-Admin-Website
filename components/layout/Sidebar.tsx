@@ -7,6 +7,7 @@ import { LogOut, User, X } from "lucide-react";
 import { NAV_ITEMS, isActivePath } from "@/lib/navigation";
 import { currentUser } from "@/lib/data";
 import { cn } from "@/lib/cn";
+import { logoutAction } from "@/lib/auth/logout";
 
 interface SidebarProps {
   mobileOpen: boolean;
@@ -118,14 +119,16 @@ export function Sidebar({ mobileOpen, collapsed, onClose }: SidebarProps) {
             <span className={cn("flex items-center gap-1.5 text-xs text-muted", collapsed && "lg:hidden")}>
               <span className="size-2 rounded-full bg-success" aria-hidden="true" /> Online
             </span>
-            <Link
-              href="/"
-              title="Keluar"
-              className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-danger hover:bg-red-50"
-            >
-              <LogOut className="size-4" aria-hidden="true" />
-              <span className={cn(collapsed && "lg:sr-only")}>Keluar</span>
-            </Link>
+            <form action={logoutAction}>
+              <button
+                type="submit"
+                title="Keluar"
+                className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-danger hover:bg-red-50"
+              >
+                <LogOut className="size-4" aria-hidden="true" />
+                <span className={cn(collapsed && "lg:sr-only")}>Keluar</span>
+              </button>
+            </form>
           </div>
         </div>
       </aside>
