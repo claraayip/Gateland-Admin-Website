@@ -13,6 +13,7 @@ export interface DashboardRealtimeData {
 
 export async function getDashboardData(): Promise<DashboardRealtimeData> {
   let summary = { ...dashboardSummary };
+  let livePayments = [...pendingPayments];
   let liveActivities = [...activities];
   let liveAnnouncements = [...announcements];
   let liveWelcome = currentUser.welcomeName;
@@ -90,6 +91,17 @@ export async function getDashboardData(): Promise<DashboardRealtimeData> {
       }
     }
 
+    // 4. Ambil data pembayaran & QRIS dari backend (/api/payments/admin/list)
+    const paymentsRes = await apiFetch<any>("/api/payments/admin/list", { requireAuth: false });
+    if (paymentsRes.data && Array.isArray(paymentsRes.data)) {
+      livePayments = [...paymentsRes.data, ...pendingPayments];
+      if (paymentsRes.summary) {
+        summary.collected += paymentsRes.summary.totalCollected || 0;
+        summary.paidUnits += paymentsRes.summary.settledCount || 0;
+        summary.qrisUnits += paymentsRes.summary.qrisCount || 0;
+      }
+    }
+
     // Susun urutan timeline aktivitas: Pengumuman terbaru paling atas, disusul log gerbang & aktivitas lainnya
     liveActivities = [...announcementActivities, ...backendAccessLogs, ...activities].slice(0, 5);
 
@@ -99,7 +111,7 @@ export async function getDashboardData(): Promise<DashboardRealtimeData> {
 
   return {
     summary,
-    payments: pendingPayments,
+    payments: livePayments,
     activities: liveActivities,
     announcements: liveAnnouncements,
     welcomeName: liveWelcome,

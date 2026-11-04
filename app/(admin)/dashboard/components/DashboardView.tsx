@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Check, ClipboardList, TrendingUp, Wallet } from "lucide-react";
 import { ActivityTimeline } from "./ActivityTimeline";
@@ -37,6 +37,18 @@ export function DashboardView({ summary, payments, activities, announcements, we
 
   const [pending, setPending] = useState(payments);
   const [notice, setNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPending(payments);
+  }, [payments]);
+
+  // Real-time polling setiap 4 detik agar pembayaran QRIS mobile langsung terdeteksi
+  useEffect(() => {
+    const timer = setInterval(() => {
+      router.refresh();
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [router]);
 
   const handleDecision = useCallback(
     (id: string, decision: Decision) => {
