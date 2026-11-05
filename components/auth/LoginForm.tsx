@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useActionState } from "react";
+import { useState, useEffect, useActionState } from "react";
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { loginAdminAction } from "@/app/(admin)/login/action";
 
 export function LoginForm() {
+  const [state, formAction, isPending] = useActionState(loginAdminAction, {});
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -185,8 +186,8 @@ export function LoginForm() {
         disabled={isPending}
         className="mt-4 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#06076B] px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#06076B]/20 transition-all duration-200 hover:bg-[#080980] active:bg-[#040552] disabled:opacity-50"
       >
-        <span>{isLoading ? "Memproses..." : "Masuk ke Dashboard Admin"}</span>
-        {!isLoading && <ArrowRight className="size-4" />}
+        <span>{isPending || isLoading ? "Memproses..." : "Masuk ke Dashboard Admin"}</span>
+        {!isPending && !isLoading && <ArrowRight className="size-4" />}
       </button>
     </form>
   );
