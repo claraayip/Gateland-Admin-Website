@@ -1,3 +1,6 @@
+/**
+ * Data GateLand terpadu untuk Dashboard, Penghuni, Iuran, dan Laporan.
+ */
 import type {
   ActivityItem,
   BudgetItem,
@@ -44,9 +47,36 @@ export const activities: ActivityItem[] = [
 ];
 
 export const budgetItems: BudgetItem[] = [
-  { id: "b1", name: "Keamanan & Satpam Pos", description: "Honor 2 personel, shift siang & malam", amount: 7_000_000, share: 45, tone: "primary", statusLabel: "Terbayar Terjadwal (Tgl 25)", statusTone: "green" },
-  { id: "b2", name: "Kebersihan & Angkut Sampah", description: "Retribusi armada sampah 3× seminggu & taman RT", amount: 6_000_000, share: 35, tone: "secondary", statusLabel: "Tercukupi Penuh", statusTone: "purple" },
-  { id: "b3", name: "Dana Sosial & Perawatan", description: "Lampu jalan, santunan warga, kas cadangan", amount: 2_000_000, share: 20, tone: "rose", statusLabel: "Masuk Kas Abadi", statusTone: "pink" },
+  {
+    id: "b1",
+    name: "Keamanan & Satpam Pos",
+    description: "Honor 2 personel, shift siang & malam",
+    amount: 7_000_000,
+    share: 45,
+    tone: "primary",
+    statusLabel: "Terbayar Terjadwal (Tgl 25)",
+    statusTone: "green",
+  },
+  {
+    id: "b2",
+    name: "Kebersihan & Angkut Sampah",
+    description: "Retribusi armada sampah 3x seminggu & taman RT",
+    amount: 6_000_000,
+    share: 35,
+    tone: "secondary",
+    statusLabel: "Tercukupi Penuh",
+    statusTone: "purple",
+  },
+  {
+    id: "b3",
+    name: "Dana Sosial & Perawatan",
+    description: "Lampu jalan, santunan warga, kas cadangan",
+    amount: 2_000_000,
+    share: 20,
+    tone: "rose",
+    statusLabel: "Masuk Kas Abadi",
+    statusTone: "pink",
+  },
 ];
 
 /* ======================= PENGHUNI ======================= */
@@ -112,7 +142,6 @@ export const residents: Resident[] = [
   },
 ];
 
-/** Opsi unit untuk form "Tambah Penghuni" (value: "<blok>-<nomor>"). */
 export const unitOptions = [
   { value: "A1-07", label: "Blok A1 No. 07 – Jl. Sekar Indah" },
   { value: "A2-05", label: "Blok A2 No. 05 – Jl. Sekar Indah" },
@@ -182,11 +211,6 @@ export const iuranPosts: IuranPost[] = [
 ];
 
 /* ======================= LAPORAN ======================= */
-/*
- * CATATAN: laporan.html di repo masih berisi konflik merge (HEAD vs origin/main).
- * Data di bawah memakai sisi origin/main (angka Rp 42.850.000 & 150 KK, selaras
- * dengan halaman Iuran). Ganti di sini bila versi HEAD yang benar.
- */
 
 export const laporanSummary = {
   period: "September 2026",

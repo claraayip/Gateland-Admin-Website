@@ -36,7 +36,6 @@ export function DashboardView({ summary, payments, activities, announcements, we
   }, [isDetailed, router]);
 
   const [pending, setPending] = useState(payments);
-  const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
     setPending(payments);
@@ -52,40 +51,32 @@ export function DashboardView({ summary, payments, activities, announcements, we
 
   const handleDecision = useCallback(
     (id: string, decision: Decision) => {
-      const target = pending.find((payment) => payment.id === id);
-      if (!target) return;
       setPending((list) => list.filter((payment) => payment.id !== id));
-      setNotice(`Pembayaran ${target.residentName} ${decision === "approved" ? "disetujui" : "ditolak"}.`);
     },
-    [pending],
+    [],
   );
 
-  const verification = (
-    <PaymentVerification
-      payments={pending}
-      detailed={isDetailed}
-      onToggleDetailed={toggleDetailedView}
-      onDecision={handleDecision}
-    />
-  );
+  return (
+    <div className="space-y-6 font-sans">
+      {/* ===== Hero Welcome Banner ===== */}
+      <section className="rounded-2xl bg-gradient-to-r from-[#060B7E] via-[#08129C] to-[#060B7E] p-7 sm:p-8 text-white shadow-xl relative overflow-hidden">
+        {/* Subtle Ambient Glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-20 size-80 rounded-full bg-blue-500/15 blur-3xl"
+        />
 
-  const liveRegion = (
-    <p role="status" aria-live="polite" className={notice ? "mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-xs font-medium text-emerald-800" : "sr-only"}>
-      {notice}
-    </p>
-  );
+        <div className="relative z-10">
+          {/* Pill Badge */}
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/10 px-3.5 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
+            <span className="size-2 rounded-full bg-emerald-400" />
+            <span>Sistem Pembukuan Realtime Aktif • Periode {summary.period}</span>
+          </div>
 
-  if (isDetailed) {
-    return (
-      <div>
-        {liveRegion}
-        {verification}
-      </div>
-    );
-  }
-
-  const collectedPercent = percentOf(summary.collected, summary.target);
-  const paidPercent = percentOf(summary.paidUnits, summary.totalUnits);
+          {/* Heading */}
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2.5">
+            Selamat Datang Kembali, {welcomeName}
+          </h1>
 
   return (
     <div className="space-y-6">
@@ -246,6 +237,16 @@ export function DashboardView({ summary, payments, activities, announcements, we
           {liveRegion}
           {verification}
         </div>
+      </section>
+
+      {/* ===== Grid Tengah: Verifikasi Pembayaran (Kiri) & Aktivitas Live (Kanan) ===== */}
+      <section className="grid items-start gap-6 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_360px]">
+        <PaymentVerification
+          payments={pending}
+          detailed={isDetailed}
+          onToggleDetailed={toggleDetailedView}
+          onDecision={handleDecision}
+        />
         <ActivityTimeline items={activities} />
       </section>
 
