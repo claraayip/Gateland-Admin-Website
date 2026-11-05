@@ -109,7 +109,15 @@ export function LoginForm() {
   }
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form
+      action={formAction}
+      onSubmit={() => {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("gateland_token", "active");
+        }
+      }}
+      className="space-y-4"
+    >
       {/* ─── Notifikasi Error dari Server / Autentikasi ─── */}
       {state?.message && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-3.5 text-xs font-semibold text-red-600">

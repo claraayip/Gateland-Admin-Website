@@ -11,15 +11,22 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-  // Periksa token login sebelum menampilkan halaman dashboard
+  // Sinkronisasi status autentikasi antara cookie server dan local storage
   useEffect(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("gateland_token") : null;
-    if (!token) {
-      window.location.replace("/");
+    const hasCookie = typeof document !== "undefined" && document.cookie.includes("gateland_token=");
+    const hasLocal = typeof window !== "undefined" && !!localStorage.getItem("gateland_token");
+
+    if (hasCookie || hasLocal) {
+      if (typeof window !== "undefined" && !hasLocal) {
+        localStorage.setItem("gateland_token", "active");
+      }
+      setIsAuthorized(true);
+      setIsCheckingAuth(false);
       return;
     }
-    setIsAuthorized(true);
-    setIsCheckingAuth(false);
+
+    // Jika tidak ada bukti autentikasi, arahkan kembali ke login
+    window.location.replace("/");
   }, []);
 
   const openMobile = useCallback(() => setMobileOpen(true), []);

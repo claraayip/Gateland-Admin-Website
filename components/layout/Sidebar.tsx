@@ -140,7 +140,14 @@ export function Sidebar({ mobileOpen, collapsed, onClose }: SidebarProps) {
             <span className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
               <span className="size-2 rounded-full bg-emerald-500" /> Online
             </span>
-            <form action={logoutAction}>
+            <form
+              action={logoutAction}
+              onSubmit={() => {
+                if (typeof window !== "undefined") {
+                  localStorage.removeItem("gateland_token");
+                }
+              }}
+            >
               <button
                 type="submit"
                 title="Keluar"
