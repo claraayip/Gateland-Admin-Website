@@ -10,6 +10,7 @@ import { BudgetDistribution } from "./BudgetDistribution";
 import { formatRupiah, percentOf } from "@/lib/format";
 import type { ActivityItem, DashboardSummary, PendingPayment } from "@/lib/types";
 import type { AnnouncementItem } from "@/lib/data";
+import { verifyPaymentAction } from "../actions";
 
 interface DashboardViewProps {
   summary: DashboardSummary;
@@ -36,26 +37,34 @@ export function DashboardView({ summary, payments, activities, announcements, we
   }, [isDetailed, router]);
 
   const [pending, setPending] = useState(payments);
+  const [prevPayments, setPrevPayments] = useState(payments);
   const [notice, setNotice] = useState<string | null>(null);
 
-  useEffect(() => {
+  if (payments !== prevPayments) {
+    setPrevPayments(payments);
     setPending(payments);
-  }, [payments]);
+  }
 
-  // Real-time polling setiap 4 detik agar pembayaran QRIS mobile langsung terdeteksi
+  // Real-time polling setiap 12 detik agar data pembayaran dan pengumuman tetap sinkron
   useEffect(() => {
     const timer = setInterval(() => {
       router.refresh();
-    }, 4000);
+    }, 12000);
     return () => clearInterval(timer);
   }, [router]);
 
   const handleDecision = useCallback(
-    (id: string, decision: Decision) => {
+    async (id: string, decision: Decision) => {
       const target = pending.find((payment) => payment.id === id);
       if (!target) return;
       setPending((list) => list.filter((payment) => payment.id !== id));
       setNotice(`Pembayaran ${target.residentName} ${decision === "approved" ? "disetujui" : "ditolak"}.`);
+      
+      try {
+        await verifyPaymentAction(id, decision);
+      } catch (err) {
+        console.error("Gagal verifikasi pembayaran ke server:", err);
+      }
     },
     [pending],
   );

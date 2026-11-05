@@ -29,7 +29,7 @@ export function BuatIuranForm() {
   const [scheme, setScheme] = useState<Scheme>("flat");
   const [amount, setAmount] = useState<number>(20_000);
 
-  const [sasaran, setSasaran] = useState<string>("semua");
+  const [sasaran] = useState<string>("semua");
   const [selectedBlocks, setSelectedBlocks] = useState<string[]>(["Blok A", "Blok B"]);
   const [frekuensiType, setFrekuensiType] = useState<FrekuensiType>("setiap_bulan");
   const [frekuensiDetail, setFrekuensiDetail] = useState("3 Bulan Sekali");

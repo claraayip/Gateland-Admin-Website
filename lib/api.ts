@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { getSessionToken } from "./auth/session";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -7,7 +6,7 @@ interface FetchOptions extends RequestInit {
   requireAuth?: boolean;
 }
 
-export async function apiFetch<T = any>(endpoint: string, options: FetchOptions = {}): Promise<{
+export async function apiFetch<T = unknown>(endpoint: string, options: FetchOptions = {}): Promise<{
   data: T | null;
   error: string | null;
   status: number;
@@ -48,10 +47,11 @@ export async function apiFetch<T = any>(endpoint: string, options: FetchOptions 
       error: null,
       status,
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : "Gagal terhubung ke server backend.";
     return {
       data: null,
-      error: err.message || "Gagal terhubung ke server backend.",
+      error: errorMessage,
       status: 500,
     };
   }

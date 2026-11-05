@@ -25,6 +25,7 @@ import { ResidentDetailModal } from "./ResidentDetailModal";
 import { getInitials } from "@/lib/format";
 import type { PaymentState, Resident } from "@/lib/types";
 import { cn } from "@/lib/cn";
+import { addResidentAction } from "../actions";
 
 interface PenghuniViewProps {
   initialResidents: Resident[];
@@ -70,13 +71,16 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
     );
   }, [residents, filter, query, sortDirection]);
 
-  function handleAdd(form: FormData) {
+  async function handleAdd(form: FormData) {
     const text = (key: string) => String(form.get(key) ?? "").trim();
     const [block = "", number = ""] = text("unit").split("-");
 
+    const residentName = text("name");
+    const residentEmail = text("email") || `${residentName.toLowerCase().replace(/[^a-z0-9]/g, "")}${Date.now().toString().slice(-4)}@gmail.com`;
+
     const created: Resident = {
       id: `r-${Date.now()}`,
-      name: text("name"),
+      name: residentName,
       phone: text("whatsapp"),
       block: `Blok ${block}`,
       number: `No. ${number}`,
@@ -87,7 +91,18 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
     };
     setResidents((list) => [created, ...list]);
     setAddOpen(false);
-    setNotice(`${created.name} berhasil ditambahkan dan menunggu verifikasi.`);
+    setNotice(`${created.name} berhasil ditambahkan dan disinkronkan ke database.`);
+
+    try {
+      await addResidentAction({
+        name: residentName,
+        email: residentEmail,
+        phone: text("whatsapp"),
+        address: text("address"),
+      });
+    } catch (err) {
+      console.error("Gagal menyimpan penghuni ke database:", err);
+    }
   }
 
   function handleVerify(resident: Resident) {

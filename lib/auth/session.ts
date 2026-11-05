@@ -8,9 +8,14 @@ export interface SessionUser {
 }
 
 export async function getSessionToken(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("gateland_token");
-  return token?.value || null;
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("gateland_token");
+    return token?.value || null;
+  } catch {
+    // Pada saat static build / prerender, cookies() belum tersedia
+    return null;
+  }
 }
 
 export async function getSessionUser(): Promise<SessionUser | null> {
@@ -36,8 +41,8 @@ export async function getSessionUser(): Promise<SessionUser | null> {
     if (json.status === "success" && json.data) {
       return json.data;
     }
-  } catch (err) {
-    console.error("Gagal verifikasi sesi ke backend:", err);
+  } catch {
+    // Backend offline
   }
 
   // Jika server backend offline sementara, baca payload token bila ada

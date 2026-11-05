@@ -6,17 +6,22 @@ import { dashboardSummary, unitOptions } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Manajemen Data Penghuni" };
 
-export default async function PenghuniPage() {
+async function PenghuniDataContainer() {
   const data = await getPenghuniData();
+  return (
+    <PenghuniView
+      initialResidents={data.residents}
+      totalAll={data.totalAll}
+      unitOptions={unitOptions}
+      period={dashboardSummary.period}
+    />
+  );
+}
 
+export default function PenghuniPage() {
   return (
     <Suspense fallback={<div className="p-8 text-center text-sm text-slate-400">Memuat data penghuni...</div>}>
-      <PenghuniView
-        initialResidents={data.residents}
-        totalAll={data.totalAll}
-        unitOptions={unitOptions}
-        period={dashboardSummary.period}
-      />
+      <PenghuniDataContainer />
     </Suspense>
   );
 }

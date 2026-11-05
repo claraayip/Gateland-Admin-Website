@@ -290,6 +290,14 @@ export interface AnnouncementItem {
   targetMeta: string;
   readMeta: string;
   badgeTone: "green" | "indigo" | "rose";
+  dbId?: number | string;
+  content?: string;
+  location?: string;
+  eventDate?: string;
+  eventTime?: string;
+  targetWarga?: string;
+  authorName?: string;
+  urgency?: string;
 }
 
 export const announcements: AnnouncementItem[] = [

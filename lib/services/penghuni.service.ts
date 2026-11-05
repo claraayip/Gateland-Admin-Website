@@ -7,16 +7,22 @@ export interface PenghuniPageData {
   totalAll: number;
 }
 
+interface BackendUser {
+  id: number | string;
+  name: string;
+  role: string;
+}
+
 export async function getPenghuniData(): Promise<PenghuniPageData> {
   let list = [...residents];
   let total = residentTotals.all;
 
   try {
     // Ambil daftar pengguna dari backend (/api/users)
-    const res = await apiFetch<any[]>("/api/users");
+    const res = await apiFetch<BackendUser[]>("/api/users");
     if (res.data && Array.isArray(res.data) && res.data.length > 0) {
       // Map user dari database MySQL ke struktur Resident
-      const backendResidents: Resident[] = res.data.map((u: any, idx: number) => {
+      const backendResidents: Resident[] = res.data.map((u, idx) => {
         const blokNumber = `A${(idx % 4) + 1}`;
         const unitNumber = String((idx % 12) + 1).padStart(2, "0");
 
@@ -49,4 +55,3 @@ export async function getPenghuniData(): Promise<PenghuniPageData> {
     totalAll: total,
   };
 }
-

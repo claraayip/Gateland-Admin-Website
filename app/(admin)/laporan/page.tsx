@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Download, Landmark, Plus, TrendingDown, TrendingUp } from "lucide-react";
+import { Landmark, TrendingDown, TrendingUp } from "lucide-react";
 import { TransactionLog } from "./components/TransactionLog";
+import { LaporanActions } from "./components/LaporanActions";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -72,12 +73,7 @@ export default function LaporanPage() {
         actions={
           <>
             <Badge tone="gray">Periode Buku: {period}</Badge>
-            <Button variant="outline">
-              <Download className="size-4" aria-hidden="true" /> Export Laporan
-            </Button>
-            <Button>
-              <Plus className="size-4" aria-hidden="true" /> Catat Alokasi & Kas Keluar
-            </Button>
+            <LaporanActions period={period} />
           </>
         }
       />

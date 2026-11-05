@@ -19,7 +19,7 @@ export async function createAnnouncementAction(
   let adminUser;
   try {
     adminUser = await requireAdmin();
-  } catch (err) {
+  } catch {
     return {
       message: "Gagal: Anda tidak memiliki akses untuk menerbitkan pengumuman.",
     };

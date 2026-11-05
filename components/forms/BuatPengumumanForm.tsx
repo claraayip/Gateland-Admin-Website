@@ -7,7 +7,6 @@ import {
   Calendar,
   ChevronRight,
   Clock,
-  CloudCheck,
   Megaphone,
   Radio,
   Save,
