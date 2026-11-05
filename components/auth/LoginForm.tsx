@@ -188,6 +188,6 @@ export function LoginForm() {
         <span>{isLoading ? "Memproses..." : "Masuk ke Dashboard Admin"}</span>
         {!isLoading && <ArrowRight className="size-4" />}
       </button>
-    </div>
+    </form>
   );
 }
