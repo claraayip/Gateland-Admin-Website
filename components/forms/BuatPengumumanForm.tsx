@@ -27,18 +27,13 @@ export function BuatPengumumanForm() {
   const [state, formAction, isPending] = useActionState(createAnnouncementAction, {});
   
   // States form
-  const [title, setTitle] = useState("Kerja Bakti Massal");
+  const [title, setTitle] = useState("");
   const [kategori, setKategori] = useState("kegiatan");
-  const [urgensi, setUrgensi] = useState("agenda");
-  const [isi, setIsi] = useState(
-    "Yth. Bapak/Ibu Warga RT 04 / RW 08,\n\n" +
-    "Menghadapi datangnya intensitas curah hujan tinggi akhir bulan ini, Pengurus RT 04 mengundang seluruh warga untuk berpartisipasi dalam agenda Kerja Bakti Lingkungan.\n\n" +
-    "Fokus kegiatan:\n" +
-    "1. Pengecekan dan pembersihan endapan sedimen got depan rumah masing-masing serta saluran utama Blok A, B, dan C."
-  );
-  const [lokasi, setLokasi] = useState("Lingkungan RT 04/ RW 08 Cluster Sekar Indah");
-  const [tanggal, setTanggal] = useState("2026-09-29");
-  const [jam, setJam] = useState("07:00 - 11:30 WIB");
+  const [urgensi, setUrgensi] = useState("biasa");
+  const [isi, setIsi] = useState("");
+  const [lokasi, setLokasi] = useState("");
+  const [tanggal, setTanggal] = useState("");
+  const [jam, setJam] = useState("");
   const [targetWarga, setTargetWarga] = useState("seluruh");
 
   return (

@@ -63,7 +63,7 @@ export function Header({
       <div className="ml-auto flex items-center gap-4">
         {/* + Buat Pengumuman */}
         <Link
-          href="/pengumuman"
+          href="/pengumuman/buat"
           className="inline-flex items-center gap-2 rounded-full bg-[#050C9C] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-md hover:bg-[#040878] transition cursor-pointer"
         >
           <Megaphone className="size-4" />
