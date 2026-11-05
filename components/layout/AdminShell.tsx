@@ -8,6 +8,19 @@ import { cn } from "@/lib/cn";
 export function AdminShell({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Periksa token login sebelum menampilkan halaman dashboard
+  useEffect(() => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("gateland_token") : null;
+    if (!token) {
+      window.location.replace("/");
+      return;
+    }
+    setIsAuthorized(true);
+    setIsCheckingAuth(false);
+  }, []);
 
   const openMobile = useCallback(() => setMobileOpen(true), []);
   const closeMobile = useCallback(() => setMobileOpen(false), []);
@@ -36,6 +49,10 @@ export function AdminShell({ children }: { children: ReactNode }) {
       desktop.removeEventListener("change", handleResize);
     };
   }, [mobileOpen]);
+
+  if (isCheckingAuth || !isAuthorized) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen">
