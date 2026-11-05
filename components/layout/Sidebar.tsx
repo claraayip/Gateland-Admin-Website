@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { logoutAction } from "@/lib/auth/logout";
 
 interface SidebarProps {
   mobileOpen: boolean;
@@ -139,20 +140,16 @@ export function Sidebar({ mobileOpen, collapsed, onClose }: SidebarProps) {
             <span className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
               <span className="size-2 rounded-full bg-emerald-500" /> Online
             </span>
-            <button
-              type="button"
-              onClick={() => {
-                document.cookie = "gateland_token=; path=/; max-age=0; SameSite=Lax";
-                localStorage.removeItem("gateland_token");
-                localStorage.removeItem("gateland_user");
-                window.location.replace("/");
-              }}
-              title="Keluar"
-              className="flex cursor-pointer items-center gap-1.5 rounded-lg px-1.5 py-1 text-xs font-semibold text-slate-600 hover:text-rose-600 transition"
-            >
-              <LogOut className="size-3.5" />
-              <span>Keluar</span>
-            </button>
+            <form action={logoutAction}>
+              <button
+                type="submit"
+                title="Keluar"
+                className="flex cursor-pointer items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-semibold text-danger hover:bg-red-50"
+              >
+                <LogOut className="size-4" aria-hidden="true" />
+                <span className={cn(collapsed && "lg:sr-only")}>Keluar</span>
+              </button>
+            </form>
           </div>
         </div>
       </aside>

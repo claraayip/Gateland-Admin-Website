@@ -1,16 +1,22 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { PenghuniView } from "./components/PenghuniView";
-import { dashboardSummary, residentTotals, residents, unitOptions } from "@/lib/data";
+import { getPenghuniData } from "@/lib/services/penghuni.service";
+import { dashboardSummary, unitOptions } from "@/lib/data";
 
 export const metadata: Metadata = { title: "Manajemen Data Penghuni" };
 
-export default function PenghuniPage() {
+export default async function PenghuniPage() {
+  const data = await getPenghuniData();
+
   return (
-    <PenghuniView
-      initialResidents={residents}
-      totalAll={residentTotals.all}
-      unitOptions={unitOptions}
-      period={dashboardSummary.period}
-    />
+    <Suspense fallback={<div className="p-8 text-center text-sm text-slate-400">Memuat data penghuni...</div>}>
+      <PenghuniView
+        initialResidents={data.residents}
+        totalAll={data.totalAll}
+        unitOptions={unitOptions}
+        period={dashboardSummary.period}
+      />
+    </Suspense>
   );
 }

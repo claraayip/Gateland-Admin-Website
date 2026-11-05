@@ -2,94 +2,66 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { LoginForm } from "@/components/auth/LoginForm";
 
-export const metadata: Metadata = { title: "Login Admin" };
+export const metadata: Metadata = { title: "Login Admin - GateLand" };
 
 export default function LoginPage() {
   return (
-    <main
-      className="min-h-screen w-full bg-white flex p-3 sm:p-5 lg:p-6"
-      style={{ fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
-    >
-      {/* ===== Panel Merek Biru (Kiri) ===== */}
-      <section
-        className="hidden lg:flex w-[480px] xl:w-[530px] shrink-0 rounded-[36px] p-10 xl:p-12 flex-col justify-between shadow-2xl relative overflow-hidden"
-        style={{
-          background:
-            "radial-gradient(circle at 85% 35%, rgba(46, 92, 255, 0.45) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(20, 45, 200, 0.35) 0%, transparent 55%), linear-gradient(155deg, #050766 0%, #060B7E 35%, #0915A2 65%, #04054C 100%)",
-        }}
-      >
-        {/* Glow efek halus di latar belakang untuk variasi gradasi 3D */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-16 -left-16 size-80 rounded-full bg-blue-500/20 blur-3xl"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 -right-24 size-80 -translate-y-1/2 rounded-full bg-indigo-400/25 blur-3xl"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-16 -left-16 size-80 rounded-full bg-blue-600/20 blur-3xl"
-        />
+    <main className="grid min-h-screen w-full grid-cols-1 bg-white font-sans lg:grid-cols-12">
+      {/* ─── Sisi Kiri: Branding & Informasi Cluster (Navy Blue) ─── */}
+      <section className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gradient-to-b from-[#090877] via-[#07066C] to-[#040356] px-8 py-12 sm:px-12 sm:py-16 lg:col-span-5 lg:px-14 xl:col-span-6 text-white">
+        {/* Subtle Ambient Glow */}
+        <div aria-hidden="true" className="pointer-events-none absolute -top-24 -left-24 size-96 rounded-full bg-blue-500/15 blur-3xl" />
+        <div aria-hidden="true" className="pointer-events-none absolute -right-24 -bottom-24 size-96 rounded-full bg-indigo-500/15 blur-3xl" />
 
-        {/* Bagian Atas: Logo & GateLand */}
-        <div className="relative z-10 pt-4">
-          {/* Logo Putih */}
-          <div className="w-56 h-56 xl:w-60 xl:h-60 mx-auto bg-white rounded-2xl flex items-center justify-center p-7 shadow-2xl mb-8">
-            <Image
-              src="/assets/logo-gateland.png"
-              alt="Logo GateLand"
-              width={200}
-              height={200}
-              className="w-full h-full object-contain"
-              priority
-            />
-          </div>
-
-          {/* Teks GateLand & Slogan Bersih */}
-          <div className="text-center">
-            <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
-              GateLand
-            </h2>
-            <p className="text-xs sm:text-sm font-medium text-white/85 mt-2">
-              Smart Living Starts Here
-            </p>
-          </div>
-        </div>
-
-        {/* Bagian Bawah: Informasi Sistem */}
-        <div className="relative z-10 pb-2">
-          {/* Judul */}
-          <h1 className="text-2xl sm:text-3xl xl:text-4xl font-extrabold text-white leading-tight mb-3">
-            Sistem Informasi Manajemen<br />
-            Cluster Terpadu
-          </h1>
-
-          {/* Deskripsi */}
-          <p className="text-xs sm:text-[13px] text-white/75 leading-relaxed max-w-sm">
-            Platform operasional aman, transparan, dan realtime untuk pengawasan gerbang RFID, iuran berkala, serta pelayanan warga.
-          </p>
-        </div>
-      </section>
-
-      {/* ===== Panel Form Login (Kanan) ===== */}
-      <section className="flex-1 flex items-center justify-center p-6 sm:p-12 lg:p-16 bg-white">
-        <div className="w-full max-w-[420px]">
-          {/* Versi Mobile: Tampilkan logo kecil di atas form jika layar HP */}
-          <div className="lg:hidden mb-8 text-center">
-            <div className="size-20 mx-auto bg-white rounded-2xl flex items-center justify-center p-3 shadow-md border border-slate-100 mb-3">
+        <div className="relative z-10 mx-auto w-full max-w-md flex flex-col">
+          {/* Bagian Atas: Logo Box Putih & Tagline GateLand (Tengah) */}
+          <div className="flex flex-col items-center text-center">
+            <div className="flex size-56 sm:size-64 items-center justify-center bg-white p-6 shadow-2xl shadow-black/25">
               <Image
                 src="/assets/logo-gateland.png"
                 alt="Logo GateLand"
-                width={70}
-                height={70}
-                className="w-full h-full object-contain"
+                width={180}
+                height={180}
+                className="h-full w-full object-contain"
                 priority
               />
             </div>
-            <h2 className="text-2xl font-extrabold text-slate-900">GateLand</h2>
-            <p className="text-xs text-slate-500">Smart Living Starts Here</p>
+
+            <h2 className="mt-8 text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-none">
+              GateLand
+            </h2>
+            <p className="mt-3 text-xs sm:text-sm font-normal tracking-wide text-slate-300">
+              Smart Living Starts Here
+            </p>
           </div>
+
+          {/* Bagian Bawah: Headline & Deskripsi Sistem (Rata Kiri, dinaikkan agar sejajar & proporsional) */}
+          <div className="mt-20 sm:mt-24 text-left">
+            <h1 className="text-2xl sm:text-[28px] font-bold leading-snug text-white tracking-tight">
+              Sistem Informasi Manajemen<br />Cluster Terpadu
+            </h1>
+            <p className="mt-3.5 text-xs text-slate-300/80 leading-relaxed max-w-sm sm:max-w-md">
+              Platform operasional aman, transparan, dan realtime untuk pengawasan gerbang RFID, iuran berkala, serta pelayanan warga.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Sisi Kanan: Form Login Admin (Clean White) ─── */}
+      <section className="flex min-h-screen flex-col justify-center bg-white px-8 py-12 sm:px-12 sm:py-16 lg:col-span-7 lg:px-16 xl:col-span-6">
+        <div className="mx-auto w-full max-w-md">
+          {/* Badge Portal Resmi */}
+          <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#F0F2FD] px-3.5 py-1 text-xs font-medium text-[#4F5ED3]">
+            <span className="text-xs">🛡️</span>
+            <span>Portal Resmi Pengelola</span>
+          </div>
+
+          <h2 className="mb-2 text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Masuk ke Akun Admin
+          </h2>
+          <p className="mb-8 text-xs sm:text-[13px] text-slate-500 leading-relaxed">
+            Gunakan kredensial pengelola resmi Anda untuk mengelola kas, perizinan, dan gerbang klaster.
+          </p>
 
           <LoginForm />
         </div>

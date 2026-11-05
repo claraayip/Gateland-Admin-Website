@@ -1,101 +1,58 @@
-function getBaseUrl(): string {
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
-      return `http://${hostname}:3000`;
-    }
-  }
-  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+import { cookies } from "next/headers";
+import { getSessionToken } from "./auth/session";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+interface FetchOptions extends RequestInit {
+  requireAuth?: boolean;
 }
 
-export interface ApiResponse<T = any> {
-  status: 'success' | 'error';
-  message?: string;
-  data?: T;
-}
-
-async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('gateland_token') : null;
-
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...(options.headers || {}),
+export async function apiFetch<T = any>(endpoint: string, options: FetchOptions = {}): Promise<{
+  data: T | null;
+  error: string | null;
+  status: number;
+}> {
+  const { requireAuth = true, headers = {}, ...rest } = options;
+  const reqHeaders: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(headers as Record<string, string>),
   };
 
-  const baseUrl = getBaseUrl();
-  const response = await fetch(`${baseUrl}${endpoint}`, {
-    ...options,
-    headers,
-  });
-
-  const json = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(json.message || `Request failed with status ${response.status}`);
+  if (requireAuth) {
+    const token = await getSessionToken();
+    if (token) {
+      reqHeaders["Authorization"] = `Bearer ${token}`;
+    }
   }
 
-  return json;
+  try {
+    const url = `${API_BASE}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+    const res = await fetch(url, {
+      headers: reqHeaders,
+      ...rest,
+    });
+
+    const status = res.status;
+    const body = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      return {
+        data: null,
+        error: body?.message || `Request gagal dengan status ${status}`,
+        status,
+      };
+    }
+
+    return {
+      data: (body?.data ?? body) as T,
+      error: null,
+      status,
+    };
+  } catch (err: any) {
+    return {
+      data: null,
+      error: err.message || "Gagal terhubung ke server backend.",
+      status: 500,
+    };
+  }
 }
-
-// ─── AUTH APIS ──────────────────────────────────────────────
-export const authApi = {
-  login: async (email: string, password: string) => {
-    return request<ApiResponse<{ token: string; user: any }>>('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-  },
-  register: async (payload: { name: string; email: string; password: string; role?: string }) => {
-    return request<ApiResponse<{ token: string; user: any }>>('/api/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-  },
-  getMe: async () => {
-    return request<ApiResponse<{ user: any }>>('/api/auth/me');
-  },
-};
-
-// ─── GATES APIS ─────────────────────────────────────────────
-export const gatesApi = {
-  getAll: async () => {
-    return request<ApiResponse<any[]>>('/api/gates');
-  },
-  getById: async (id: number | string) => {
-    return request<ApiResponse<any>>(`/api/gates/${id}`);
-  },
-  create: async (data: { name: string; location: string }) => {
-    return request<ApiResponse<any>>('/api/gates', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-  },
-  action: async (id: number | string, action: 'OPEN' | 'CLOSE') => {
-    return request<ApiResponse<any>>(`/api/gates/${id}/action`, {
-      method: 'POST',
-      body: JSON.stringify({ action }),
-    });
-  },
-};
-
-// ─── USERS APIS ─────────────────────────────────────────────
-export const usersApi = {
-  getAll: async () => {
-    return request<ApiResponse<any[]>>('/api/users');
-  },
-};
-
-// ─── ACCESS LOGS APIS ───────────────────────────────────────
-export const accessLogsApi = {
-  getAll: async () => {
-    return request<ApiResponse<any[]>>('/api/access-logs');
-  },
-};
-
-// ─── STATS APIS ─────────────────────────────────────────────
-export const statsApi = {
-  get: async () => {
-    return request<ApiResponse<any>>('/api/stats');
-  },
-};

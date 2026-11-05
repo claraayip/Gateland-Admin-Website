@@ -34,84 +34,16 @@ export const dashboardSummary: DashboardSummary = {
 };
 
 export const pendingPayments: PendingPayment[] = [
-  {
-    id: "p1",
-    residentName: "Ibu Azizah Pratama",
-    unit: "Blok B4 / No. 12",
-    postName: "Iuran Kebersihan dan Keamanan",
-    amount: 175_000,
-    channel: "BCA Transfer",
-    submittedAgo: "September 2026",
-    avatarTone: "blue",
-  },
-  {
-    id: "p2",
-    residentName: "Ibu Rahayu Eka",
-    unit: "Blok A2 / No. 05",
-    postName: "Iuran Rutin",
-    amount: 200_000,
-    channel: "BRI Transfer",
-    submittedAgo: "September 2026",
-    avatarTone: "blue",
-  },
-  {
-    id: "p3",
-    residentName: "Ibu Shinta Kristy",
-    unit: "Blok C1 / No. 08",
-    postName: "Iuran Kebersihan dan Keamanan",
-    amount: 175_000,
-    channel: "QRIS GateLand",
-    submittedAgo: "September 2026",
-    avatarTone: "blue",
-  },
-  {
-    id: "p4",
-    residentName: "Ibu Ratna Kartika",
-    unit: "Blok B2 / No. 14",
-    postName: "Iuran Kebersihan dan Keamanan",
-    amount: 175_000,
-    channel: "BSI Transfer",
-    submittedAgo: "September 2026",
-    avatarTone: "pink",
-  },
+  { id: "p1", residentName: "Ibu Azizah Pratama", unit: "Blok B4 / No. 12", postName: "Iuran Kebersihan dan Keamanan", amount: 175_000, channel: "BCA Transfer", submittedAgo: "September 2026", avatarTone: "blue" },
+  { id: "p2", residentName: "Ibu Rahayu Eka", unit: "Blok A2 / No. 05", postName: "Iuran Rutin", amount: 200_000, channel: "BRI Transfer", submittedAgo: "September 2026", avatarTone: "purple" },
 ];
 
 export const activities: ActivityItem[] = [
-  {
-    id: "a1",
-    kind: "approved",
-    title: "Iuran Kas RT Disetujui",
-    description: "Ibu Maya (A1/04) kwitansi resmi otomatis terkirim.",
-    meta: "14:40 WIB • oleh Bpk. Bambang",
-  },
-  {
-    id: "a2",
-    kind: "reminder",
-    title: "Pengingat Tagihan Otomatis",
-    description: "WhatsApp bot berhasil menjangkau 8 nomor kepala keluarga.",
-    meta: "11:00 WIB • Sistem GateLand",
-  },
-  {
-    id: "a3",
-    kind: "new-resident",
-    title: "Warga Baru Terdaftar",
-    description: "Bpk. Dimas Pratama (Blok D1/02) telah mengaktifkan akun mobile.",
-    meta: "09:15 WIB • Mandiri",
-  },
-  {
-    id: "a4",
-    kind: "new-resident",
-    title: "Warga Baru Terdaftar",
-    description: "Bpk. Dimas Pratama (Blok D1/02) telah mengaktifkan akun mobile.",
-    meta: "09:15 WIB • Mandiri",
-  },
-  {
-    id: "a5",
-    kind: "announcement",
-    title: "Pengumuman Terbit",
-    description: '"Jadwal Penjemputan Sampah Daur Ulang Setiap Kamis Pagi".',
-    meta: "Kemarin, 19:30 WIB",
-  },
+  { id: "a1", kind: "approved", title: "Iuran Kas RT Disetujui", description: "Ibu Maya (A1/04) kwitansi resmi otomatis terkirim.", meta: "14:40 WIB • oleh Bpk. Bambang" },
+  { id: "a2", kind: "reminder", title: "Pengingat Tagihan Otomatis", description: "WhatsApp bot berhasil menjangkau 8 nomor kepala keluarga.", meta: "11:00 WIB • Sistem GateLand" },
+  { id: "a3", kind: "new-resident", title: "Warga Baru Terdaftar", description: "Bpk. Dimas Pratama (Blok D1/02) telah mengaktifkan akun mobile.", meta: "09:15 WIB • Mandiri" },
+  { id: "a4", kind: "new-resident", title: "Warga Baru Terdaftar", description: "Bpk. Dimas Pratama (Blok D1/02) telah mengaktifkan akun mobile.", meta: "09:15 WIB • Mandiri" },
+  { id: "a5", kind: "announcement", title: "Pengumuman Terbit", description: "\"Jadwal Penjemputan Sampah Daur Ulang Setiap Kamis Pagi\".", meta: "Kemarin, 19:30 WIB" },
 ];
 
 export const budgetItems: BudgetItem[] = [
@@ -429,4 +361,13 @@ export function addAnnouncement(data: { judul: string; kategori: string; lokasi?
     badgeTone: "indigo",
   };
   announcements.unshift(newAnn);
+
+  // Tambahkan juga ke aktivitas terbaru agar langsung muncul di timeline
+  activities.unshift({
+    id: `act-${Date.now()}`,
+    kind: "announcement",
+    title: "Pengumuman Terbit",
+    description: `"${data.judul}".`,
+    meta: "Baru saja • oleh Admin",
+  });
 }
