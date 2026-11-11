@@ -4,6 +4,7 @@ import { PenghuniView } from "./components/PenghuniView";
 import { getPenghuniData } from "@/lib/services/penghuni.service";
 import { dashboardSummary, unitOptions } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Manajemen Data Penghuni" };
 
 async function PenghuniDataContainer() {
@@ -13,7 +14,7 @@ async function PenghuniDataContainer() {
       initialResidents={data.residents}
       totalAll={data.totalAll}
       unitOptions={unitOptions}
-      period={dashboardSummary.period}
+      period="November 2026"
     />
   );
 }

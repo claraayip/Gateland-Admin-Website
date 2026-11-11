@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { DashboardView } from "./components/DashboardView";
 import { getDashboardData } from "@/lib/services/dashboard.service";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Dashboard Admin" };
 
 async function DashboardDataContainer() {

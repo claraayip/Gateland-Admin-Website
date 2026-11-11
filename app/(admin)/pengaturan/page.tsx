@@ -78,7 +78,7 @@ export default function PengaturanPage() {
             </div>
             <div>
               <h3 className="text-sm font-bold text-ink">Profil Akun Pengelola Aktif</h3>
-              <p className="text-xs text-muted">Kredensial resmi administrator website RT 04 / RW 08</p>
+              <p className="text-xs text-muted">Kredensial resmi administrator website Cluster GateLand</p>
             </div>
           </div>
 
@@ -127,29 +127,18 @@ export default function PengaturanPage() {
               <input
                 type="text"
                 readOnly
-                defaultValue="Klaster Sekar Indah (Gardenia & Boulevard)"
+                defaultValue="Cluster GateLand"
                 className="w-full rounded-xl border border-line bg-slate-50 px-3.5 py-2.5 text-slate-700 font-medium"
               />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block font-semibold text-ink mb-1">Rukun Tetangga (RT)</label>
-                <input
-                  type="text"
-                  readOnly
-                  defaultValue="RT 04"
-                  className="w-full rounded-xl border border-line bg-slate-50 px-3.5 py-2.5 text-slate-700 font-medium"
-                />
-              </div>
-              <div>
-                <label className="block font-semibold text-ink mb-1">Rukun Warga (RW)</label>
-                <input
-                  type="text"
-                  readOnly
-                  defaultValue="RW 08"
-                  className="w-full rounded-xl border border-line bg-slate-50 px-3.5 py-2.5 text-slate-700 font-medium"
-                />
-              </div>
+            <div>
+              <label className="block font-semibold text-ink mb-1">Wilayah Operasional</label>
+              <input
+                type="text"
+                readOnly
+                defaultValue="Cluster GateLand"
+                className="w-full rounded-xl border border-line bg-slate-50 px-3.5 py-2.5 text-slate-700 font-medium"
+              />
             </div>
             <div>
               <label className="block font-semibold text-ink mb-1">Pos Keamanan &amp; Gerbang</label>
@@ -196,8 +185,8 @@ export default function PengaturanPage() {
           <label className="flex items-center gap-3 p-3 rounded-xl border border-line bg-slate-50/50 cursor-pointer hover:bg-slate-50">
             <input type="checkbox" defaultChecked className="size-4 accent-primary rounded" />
             <div>
-              <p className="font-bold text-ink">Peringatan Jatuh Tempo Tanggal 10</p>
-              <p className="text-muted">Kirim pengingat otomatis ke warga yang belum membayar iuran setiap tanggal 10 awal bulan.</p>
+              <p className="font-bold text-ink">Pengingat Jatuh Tempo</p>
+              <p className="text-muted">Kirim pengingat otomatis ke warga yang belum membayar iuran sebelum batas waktu yang telah ditentukan.</p>
             </div>
           </label>
         </div>

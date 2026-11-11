@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   ArrowDownAZ,
   ArrowUpZA,
@@ -8,10 +9,12 @@ import {
   CircleCheck,
   Clock,
   Download,
+  Mail,
   Phone,
   Search,
   UserPlus,
   Users,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
@@ -23,9 +26,10 @@ import { Table, type Column } from "@/components/ui/Table";
 import { AddResidentModal } from "./AddResidentModal";
 import { ResidentDetailModal } from "./ResidentDetailModal";
 import { getInitials } from "@/lib/format";
+import { downloadExcelFile } from "@/lib/export";
 import type { PaymentState, Resident } from "@/lib/types";
 import { cn } from "@/lib/cn";
-import { addResidentAction } from "../actions";
+import { addResidentAction, verifyResidentAction } from "../actions";
 
 interface PenghuniViewProps {
   initialResidents: Resident[];
@@ -40,18 +44,38 @@ type SortDirection = "asc" | "desc" | null;
 const paymentPill: Record<PaymentState, { className: string; icon: LucideIcon }> = {
   lunas: { className: "bg-emerald-50 text-emerald-700", icon: CircleCheck },
   belum_lunas: { className: "bg-red-50 text-red-700", icon: Clock },
-  menunggu_verifikasi: { className: "bg-red-50 text-red-700", icon: Clock },
+  menunggu_verifikasi: { className: "bg-amber-50 text-amber-700", icon: Clock },
+  belum_ada_tagihan: { className: "bg-slate-100 text-slate-700", icon: Wallet },
 };
 
 export function PenghuniView({ initialResidents, totalAll, unitOptions, period }: PenghuniViewProps) {
+  const router = useRouter();
   const [residents, setResidents] = useState(initialResidents);
+  const [prevInitial, setPrevInitial] = useState(initialResidents);
   const [filter, setFilter] = useState<Filter>("semua");
   const [query, setQuery] = useState("");
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
 
   const [addOpen, setAddOpen] = useState(false);
+  const [addError, setAddError] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [verifyingId, setVerifyingId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [notice, setNotice] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  if (initialResidents !== prevInitial) {
+    setPrevInitial(initialResidents);
+    setResidents(initialResidents);
+  }
+
+  // Polling periodik agar warga yang baru registrasi di aplikasi mobile langsung tampil di web admin
+  useEffect(() => {
+    if (addOpen || selectedId !== null) return;
+    const timer = setInterval(() => {
+      router.refresh();
+    }, 15000);
+    return () => clearInterval(timer);
+  }, [addOpen, selectedId, router]);
 
   const pendingVerification = residents.filter((resident) => resident.status === "baru_registrasi").length;
   const selected = residents.find((resident) => resident.id === selectedId) ?? null;
@@ -61,7 +85,17 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
     const filtered = residents.filter((resident) => {
       if (filter === "verifikasi" && resident.status !== "baru_registrasi") return false;
       if (!keyword) return true;
-      return [resident.name, resident.phone, resident.block, resident.number].join(" ").toLowerCase().includes(keyword);
+      return [
+        resident.name,
+        resident.email ?? resident.detail?.email ?? "",
+        resident.phone,
+        resident.block,
+        resident.number,
+        resident.detail?.address ?? "",
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(keyword);
     });
     if (!sortDirection) return filtered;
     const factor = sortDirection === "asc" ? 1 : -1;
@@ -76,66 +110,115 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
     const [block = "", number = ""] = text("unit").split("-");
 
     const residentName = text("name");
-    const residentEmail = text("email") || `${residentName.toLowerCase().replace(/[^a-z0-9]/g, "")}${Date.now().toString().slice(-4)}@gmail.com`;
+    const rawEmail = text("email");
+    const slug = residentName.toLowerCase().replace(/[^a-z0-9]/g, "") || "warga";
+    const residentEmail = rawEmail || `${slug}${Date.now().toString().slice(-4)}@gmail.com`;
+    const addressText = text("address");
+    const whatsappText = text("whatsapp");
+    const fullAddress = addressText || (block ? `Blok ${block} No. ${number}` : "Klaster GateLand");
 
-    const created: Resident = {
-      id: `r-${Date.now()}`,
+    setIsAdding(true);
+    setAddError(null);
+
+    const res = await addResidentAction({
       name: residentName,
-      phone: text("whatsapp"),
-      block: `Blok ${block}`,
-      number: `No. ${number}`,
+      email: residentEmail,
+      phone: whatsappText,
+      address: fullAddress,
+    });
+
+    setIsAdding(false);
+
+    if (!res.success) {
+      setAddError(res.error || "Gagal menyimpan data penghuni ke database.");
+      return;
+    }
+
+    const dbUser = res.data?.user;
+    const created: Resident = {
+      id: dbUser?.id ? `db-user-${dbUser.id}` : `r-${Date.now()}`,
+      dbId: dbUser?.id,
+      name: dbUser?.name || residentName,
+      email: dbUser?.email || residentEmail,
+      phone: whatsappText || "Belum diisi",
+      block: block ? `Blok ${block}` : fullAddress,
+      number: number ? `No. ${number}` : "Klaster GateLand",
       memberCount: Number(text("members")) || 1,
-      memberSummary: "Belum dirinci",
+      memberSummary: "Akun Warga Terdaftar",
       status: "baru_registrasi",
-      payment: { state: "menunggu_verifikasi", label: "Menunggu Verifikasi" },
+      payment: { state: "belum_ada_tagihan", label: "Tagihan Rp 0" },
     };
+
     setResidents((list) => [created, ...list]);
     setAddOpen(false);
-    setNotice(`${created.name} berhasil ditambahkan dan disinkronkan ke database.`);
-
-    try {
-      await addResidentAction({
-        name: residentName,
-        email: residentEmail,
-        phone: text("whatsapp"),
-        address: text("address"),
-      });
-    } catch (err) {
-      console.error("Gagal menyimpan penghuni ke database:", err);
-    }
+    setNotice({
+      type: "success",
+      text: `${created.name} berhasil ditambahkan dan disinkronkan ke database.`,
+    });
+    router.refresh();
   }
 
-  function handleVerify(resident: Resident) {
-    setResidents((list) => list.map((item) => (item.id === resident.id ? { ...item, status: "aktif" } : item)));
-    setNotice(`Akun ${resident.name} terverifikasi.`);
+  async function handleVerify(resident: Resident) {
+    if (resident.dbId) {
+      setVerifyingId(resident.id);
+      const res = await verifyResidentAction(resident.dbId, true);
+      setVerifyingId(null);
+
+      if (!res.success) {
+        setNotice({
+          type: "error",
+          text: res.error || `Gagal memverifikasi akun ${resident.name}.`,
+        });
+        return;
+      }
+    }
+
+    setResidents((list) =>
+      list.map((item) => (item.id === resident.id ? { ...item, status: "aktif" } : item)),
+    );
+    setNotice({
+      type: "success",
+      text: `Akun ${resident.name} berhasil diverifikasi.`,
+    });
+    router.refresh();
   }
 
   const columns: Column<Resident>[] = [
     {
       key: "account",
       header: "Akun Warga & Kontak",
-      cell: (resident) => (
-        <div className="flex items-center gap-3">
-          <Avatar initials={getInitials(resident.name)} tone="navy" />
-          <div className="min-w-0 space-y-0.5">
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setSelectedId(resident.id)}
-                className="cursor-pointer text-left font-semibold text-ink hover:text-primary hover:underline"
-              >
-                {resident.name}
-              </button>
-              <Badge tone={resident.status === "aktif" ? "green" : "darkred"}>
-                {resident.status === "aktif" ? "Aktif" : "BARU REGISTRASI"}
-              </Badge>
+      cell: (resident) => {
+        const displayEmail = resident.email || resident.detail?.email;
+        return (
+          <div className="flex items-center gap-3">
+            <Avatar initials={getInitials(resident.name)} tone="navy" />
+            <div className="min-w-0 space-y-0.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedId(resident.id)}
+                  className="cursor-pointer text-left font-semibold text-ink hover:text-primary hover:underline"
+                >
+                  {resident.name}
+                </button>
+                <Badge tone={resident.status === "aktif" ? "green" : "darkred"}>
+                  {resident.status === "aktif" ? "Aktif" : "BARU REGISTRASI"}
+                </Badge>
+              </div>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted">
+                <span className="flex items-center gap-1">
+                  <Phone className="size-3" aria-hidden="true" /> {resident.phone}
+                </span>
+                {displayEmail && displayEmail !== "-" && (
+                  <span className="flex items-center gap-1">
+                    <Mail className="size-3" aria-hidden="true" /> {displayEmail}
+                  </span>
+                )}
+              </div>
             </div>
-            <p className="flex items-center gap-1.5 text-xs text-muted">
-              <Phone className="size-3" aria-hidden="true" /> {resident.phone}
-            </p>
           </div>
-        </div>
-      ),
+        );
+      },
     },
     {
       key: "unit",
@@ -149,7 +232,7 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
     },
     {
       key: "family",
-      header: "Anggota KK",
+      header: "Anggota Keluarga",
       cell: (resident) => (
         <div>
           <p className="flex items-center gap-1.5 font-semibold text-ink">
@@ -176,8 +259,12 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
       header: <span className="sr-only">Aksi</span>,
       cell: (resident) =>
         resident.status === "baru_registrasi" ? (
-          <Button size="sm" onClick={() => handleVerify(resident)}>
-            Verifikasi Akun
+          <Button
+            size="sm"
+            disabled={verifyingId === resident.id}
+            onClick={() => handleVerify(resident)}
+          >
+            {verifyingId === resident.id ? "Memverifikasi..." : "Verifikasi Akun"}
           </Button>
         ) : null,
     },
@@ -185,23 +272,63 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
 
   const SortIcon = sortDirection === "desc" ? ArrowUpZA : ArrowDownAZ;
 
+  function handleExportExcel() {
+    const headers = [
+      "No",
+      "Nama Lengkap",
+      "Email",
+      "No. WhatsApp",
+      "Blok / Unit",
+      "Keterangan Unit",
+      "Anggota Keluarga",
+      "Status Akun",
+      "Status Pembayaran",
+    ];
+    const rows = visible.map((r, index) => [
+      index + 1,
+      r.name,
+      r.email || r.detail?.email || "-",
+      r.phone,
+      r.block,
+      r.number,
+      `${r.memberCount} jiwa (${r.memberSummary})`,
+      r.status === "aktif" ? "Aktif / Terverifikasi" : "Menunggu Verifikasi",
+      r.payment.label,
+    ]);
+    downloadExcelFile(
+      `Data_Penghuni_Cluster_GateLand_${period.replace(/\s+/g, "_")}.xls`,
+      `Daftar Penghuni Cluster GateLand (${period})`,
+      headers,
+      rows,
+    );
+    setNotice({
+      type: "success",
+      text: `Data ${visible.length} penghuni berhasil diekspor ke format Excel (.xls).`,
+    });
+  }
+
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow={
           <>
-            <Badge tone="purple">• Cluster Gardenia & Boulevard</Badge>
-            <Badge tone="gray">• Database Warga Aktif RT 04 / RW 08</Badge>
+            <Badge tone="purple">• Cluster GateLand</Badge>
+            <Badge tone="gray">• Database Warga Aktif</Badge>
           </>
         }
         title="Manajemen Data Penghuni"
-        description="Kelola direktori warga, status kependudukan dan pembayaran, verifikasi akun registrasi, dan akses administrasi GateLand."
+        description="Kelola direktori warga, status kependudukan dan pembayaran, verifikasi akun registrasi, dan akses administrasi Cluster GateLand."
         actions={
           <>
-            <Button variant="outline">
-              <Download className="size-4" aria-hidden="true" /> Ekspor Data (Excel/CSV)
+            <Button variant="outline" onClick={handleExportExcel} className="no-print">
+              <Download className="size-4" aria-hidden="true" /> Ekspor Data (Excel)
             </Button>
-            <Button onClick={() => setAddOpen(true)}>
+            <Button
+              onClick={() => {
+                setAddError(null);
+                setAddOpen(true);
+              }}
+            >
               <UserPlus className="size-4" aria-hidden="true" /> Tambah Penghuni Baru
             </Button>
           </>
@@ -209,8 +336,16 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
       />
 
       {notice && (
-        <p role="status" className="flex items-center justify-between gap-3 rounded-xl bg-emerald-50 px-4 py-3 text-xs font-medium text-emerald-800">
-          {notice}
+        <p
+          role="status"
+          className={cn(
+            "flex items-center justify-between gap-3 rounded-xl px-4 py-3 text-xs font-medium",
+            notice.type === "error"
+              ? "bg-red-50 text-red-800"
+              : "bg-emerald-50 text-emerald-800",
+          )}
+        >
+          {notice.text}
           <button type="button" onClick={() => setNotice(null)} className="cursor-pointer font-semibold underline">
             Tutup
           </button>
@@ -268,9 +403,9 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
       <Card>
         <div className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div className="flex flex-wrap items-center gap-3">
-            <h2 className="text-base font-bold text-ink">Daftar Penghuni RT 04</h2>
+            <h2 className="text-base font-bold text-ink">Daftar Penghuni GateLand</h2>
             <Badge tone="purple">
-              Menampilkan {visible.length} dari {totalAll} KK
+              Menampilkan {visible.length} dari {totalAll} Penghuni
             </Badge>
           </div>
           <Button
@@ -294,9 +429,14 @@ export function PenghuniView({ initialResidents, totalAll, unitOptions, period }
 
       <AddResidentModal
         open={addOpen}
-        onClose={() => setAddOpen(false)}
+        onClose={() => {
+          setAddError(null);
+          setAddOpen(false);
+        }}
         onSubmit={handleAdd}
         unitOptions={unitOptions}
+        error={addError}
+        submitting={isAdding}
       />
       <ResidentDetailModal resident={selected} onClose={() => setSelectedId(null)} />
     </div>

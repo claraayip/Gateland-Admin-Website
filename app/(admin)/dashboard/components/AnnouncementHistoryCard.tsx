@@ -376,7 +376,7 @@ export function AnnouncementHistoryCard({
               type="text"
               value={editLocation}
               onChange={(e) => setEditLocation(e.target.value)}
-              placeholder="Contoh: Balai Warga RT 04"
+              placeholder="Contoh: Balai Warga Cluster GateLand"
               className="w-full rounded-xl border border-line px-3.5 py-2.5 text-xs text-ink focus:border-primary focus:outline-none"
             />
           </div>

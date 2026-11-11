@@ -9,12 +9,14 @@ import { redirect } from "next/navigation";
 export type FormState = {
   errors?: Record<string, string[]>;
   message?: string;
+  success?: boolean;
 };
 
 export async function createIuranAction(
   prevState: FormState, 
   formData: FormData
 ): Promise<FormState> {
+  const isEmbedded = formData.get("embedded") === "true";
   const rawData = Object.fromEntries(formData.entries());
   
   const result = iuranSchema.safeParse(rawData);
@@ -32,8 +34,10 @@ export async function createIuranAction(
         residentName: result.data.sasaran === "semua" ? "Seluruh Warga" : "Warga Blok Terpilih",
         unit: result.data.selectedBlocks || "Unit 1",
         month: result.data.namaIuran,
+        description: result.data.uraian || "",
         amount: result.data.nominal,
         dueDate: `Tanggal ${result.data.jatuhTempoTanggal}`,
+        sasaran: result.data.sasaran,
       }),
     });
   } catch (err) {
@@ -53,5 +57,9 @@ export async function createIuranAction(
   });
 
   revalidatePath("/iuran");
+  revalidatePath("/dashboard");
+  if (isEmbedded) {
+    return { success: true };
+  }
   redirect("/iuran");
 }

@@ -15,9 +15,18 @@ interface AddResidentModalProps {
   onClose: () => void;
   onSubmit: (data: FormData) => void;
   unitOptions: { value: string; label: string }[];
+  error?: string | null;
+  submitting?: boolean;
 }
 
-export function AddResidentModal({ open, onClose, onSubmit, unitOptions }: AddResidentModalProps) {
+export function AddResidentModal({
+  open,
+  onClose,
+  onSubmit,
+  unitOptions,
+  error,
+  submitting = false,
+}: AddResidentModalProps) {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     onSubmit(new FormData(event.currentTarget));
@@ -29,20 +38,25 @@ export function AddResidentModal({ open, onClose, onSubmit, unitOptions }: AddRe
       onClose={onClose}
       title="Tambah Penghuni Baru"
       badge={<Badge tone="indigo">Formulir Warga</Badge>}
-      description="Daftarkan warga baru ke direktori hunian Klaster Gardenia & Boulevard RT 04 / RW 08."
+      description="Daftarkan warga baru ke direktori hunian Cluster GateLand."
       icon={<UserPlus className="size-5" aria-hidden="true" />}
       footer={
         <>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} disabled={submitting}>
             Batal
           </Button>
-          <Button type="submit" form={FORM_ID}>
-            Simpan dan Tambahkan Penghuni
+          <Button type="submit" form={FORM_ID} disabled={submitting}>
+            {submitting ? "Menyimpan..." : "Simpan dan Tambahkan Penghuni"}
           </Button>
         </>
       }
     >
       <form id={FORM_ID} onSubmit={handleSubmit} className="space-y-4">
+        {error && (
+          <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-xs font-medium text-red-700">
+            {error}
+          </p>
+        )}
         <FormSection variant="plain" marker="A" title="Identitas Kepala Keluarga (Akun Warga)" subtitle="* Wajib diisi">
           <div className="grid gap-4 sm:grid-cols-2">
             <FormInput name="name" label="Nama Lengkap (Sesuai KTP)" placeholder="Ibu Azizah Pratama" required />

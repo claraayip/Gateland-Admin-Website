@@ -38,7 +38,13 @@ export function StatCard({
   children,
 }: StatCardProps) {
   return (
-    <Card className={cn("flex flex-col gap-4 p-5", inverted && "border-primary bg-primary text-white", className)}>
+    <Card
+      className={cn(
+        "flex flex-col gap-4 p-5",
+        inverted && "!border-[#090580] !bg-[#090580] text-white",
+        className,
+      )}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className={cn("text-[11px] font-bold tracking-wide uppercase", inverted ? "text-indigo-200" : "text-muted")}>

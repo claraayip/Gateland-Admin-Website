@@ -38,7 +38,7 @@ export function ResidentDetailModal({ resident, onClose }: ResidentDetailModalPr
       badge={
         verified ? (
           <Badge tone="green">
-            <CircleCheck className="size-3" aria-hidden="true" /> Terverifikasi RT 04
+            <CircleCheck className="size-3" aria-hidden="true" /> Terverifikasi GateLand
           </Badge>
         ) : (
           <Badge tone="darkred">Menunggu Verifikasi</Badge>
@@ -50,7 +50,15 @@ export function ResidentDetailModal({ resident, onClose }: ResidentDetailModalPr
       {resident && (
         <div className="space-y-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <Avatar initials={getInitials(resident.name)} tone="navy" size="lg" />
+            {detail?.photoUrl ? (
+              <img
+                src={detail.photoUrl}
+                alt={`Foto ${resident.name}`}
+                className="size-14 shrink-0 rounded-full border border-line object-cover"
+              />
+            ) : (
+              <Avatar initials={getInitials(resident.name)} tone="navy" size="lg" />
+            )}
             <div className="min-w-0 space-y-1">
               <h3 className="text-lg font-bold text-ink">{resident.name}</h3>
               <p className="text-xs text-muted">
@@ -85,44 +93,72 @@ export function ResidentDetailModal({ resident, onClose }: ResidentDetailModalPr
             </p>
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
-              <Panel title="Data Kependudukan & Keluarga" aside={`${resident.memberCount} Jiwa`}>
-                <ol className="space-y-2 text-xs">
-                  {detail.members.map((member, index) => (
-                    <li key={member.name} className="flex items-baseline justify-between gap-3">
-                      <span className="font-medium text-ink">
-                        {index + 1}. {member.name}
-                      </span>
-                      <span className="text-muted">{member.role}</span>
-                    </li>
-                  ))}
-                </ol>
+              <Panel title="Data Diri & Kependudukan" aside={detail.residencyStatus || `${resident.memberCount} Jiwa`}>
+                <dl className="space-y-2 text-xs">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-muted">NIK</dt>
+                    <dd className="font-medium text-ink">{detail.nik || "Belum diisi"}</dd>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-muted">Tempat, Tgl Lahir</dt>
+                    <dd className="font-medium text-ink">{detail.birthPlaceDate || "Belum diisi"}</dd>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-muted">Status Kependudukan</dt>
+                    <dd className="font-medium text-ink">{detail.residencyStatus || "Belum diisi"}</dd>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-muted">Anggota Keluarga</dt>
+                    <dd className="font-medium text-ink">{detail.familyCount || "Belum diisi"}</dd>
+                  </div>
+                </dl>
                 <p className="mt-3 border-t border-line pt-3 text-xs text-muted">
                   Kontak darurat: <span className="font-medium text-ink">{detail.emergencyContact.name}</span> •{" "}
                   {detail.emergencyContact.phone}
                 </p>
               </Panel>
 
-              <Panel title="Akses Keamanan & RFID Gerbang" aside={`${detail.vehicles.length} Tag Aktif`}>
-                <ul className="space-y-3 text-xs">
-                  {detail.vehicles.map((vehicle) => (
-                    <li key={vehicle.rfid} className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="font-medium text-ink">{vehicle.name}</p>
-                        <p className="text-muted">
-                          {vehicle.label} • {vehicle.plate}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-muted">{vehicle.rfid}</p>
-                        <p className="font-semibold text-emerald-700">• Aktif</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+              <Panel title="Data Hunian, Aset & Kendaraan" aside={`${detail.vehicles.length} Tag Aktif`}>
+                <dl className="mb-3 space-y-2 text-xs">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-muted">Wilayah RW</dt>
+                    <dd className="font-medium text-ink">{detail.rwArea || "Belum diisi"}</dd>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-muted">Status Penghuni</dt>
+                    <dd className="font-medium text-ink">{detail.occupancyStatus || detail.ownership || "Belum diisi"}</dd>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-muted">Daya Listrik & Air</dt>
+                    <dd className="font-medium text-ink">{detail.powerWater || "Belum diisi"}</dd>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-muted">Kendaraan</dt>
+                    <dd className="font-medium text-ink">{detail.vehicleText || "Belum diisi"}</dd>
+                  </div>
+                </dl>
+                {detail.vehicles.length > 0 && (
+                  <ul className="space-y-3 border-t border-line pt-3 text-xs">
+                    {detail.vehicles.map((vehicle) => (
+                      <li key={vehicle.rfid} className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="font-medium text-ink">{vehicle.name}</p>
+                          <p className="text-muted">
+                            {vehicle.label} • {vehicle.plate}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-muted">{vehicle.rfid}</p>
+                          <p className="font-semibold text-emerald-700">• Aktif</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </Panel>
 
               <div className="md:col-span-2">
-                <Panel title="Status Iuran Pengelolaan Lingkungan (IPL)" aside={`Lunas ${detail.ipl.period}`}>
+                <Panel title="Status Iuran Pengelolaan Lingkungan (IPL)" aside={resident.payment.label}>
                   <div className="grid gap-4 text-xs sm:grid-cols-3">
                     <div>
                       <p className="text-muted">Periode Berjalan • Terverifikasi</p>
@@ -131,13 +167,17 @@ export function ResidentDetailModal({ resident, onClose }: ResidentDetailModalPr
                     </div>
                     <div>
                       <p className="mb-1 font-semibold text-ink">Komponen iuran tercover</p>
-                      <ul className="space-y-1 text-muted">
-                        {detail.ipl.components.map((component) => (
-                          <li key={component.label}>
-                            {component.label} ({formatRupiah(component.amount)})
-                          </li>
-                        ))}
-                      </ul>
+                      {detail.ipl.components.length > 0 ? (
+                        <ul className="space-y-1 text-muted">
+                          {detail.ipl.components.map((component) => (
+                            <li key={component.label}>
+                              {component.label} ({formatRupiah(component.amount)})
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-muted">Belum ada tagihan atau rincian iuran terdaftar.</p>
+                      )}
                     </div>
                     <div className="space-y-1">
                       <p className="font-semibold text-ink">Rangkuman kepatuhan</p>

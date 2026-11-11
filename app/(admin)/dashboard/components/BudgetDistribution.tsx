@@ -23,7 +23,12 @@ const statusBadgeColors: Record<string, string> = {
   pink: "text-[#be185d] bg-[#fdf2f8]",
 };
 
-export function BudgetDistribution() {
+interface BudgetDistributionProps {
+  collected?: number;
+  period?: string;
+}
+
+export function BudgetDistribution({ collected = 0, period = "November 2026" }: BudgetDistributionProps) {
   const totalShares = budgetItems.reduce((acc, item) => acc + item.share, 0);
 
   return (
@@ -32,7 +37,7 @@ export function BudgetDistribution() {
       <div>
         <h2 className="text-base font-bold text-ink">Distribusi &amp; Alokasi Anggaran Bulanan</h2>
         <p className="mt-1 text-xs text-muted">
-          Proyeksi penyaluran kas iuran operasional klaster GateLand per September 2026
+          Proyeksi penyaluran kas iuran operasional Cluster GateLand per {period}
         </p>
       </div>
 
@@ -55,29 +60,32 @@ export function BudgetDistribution() {
 
       {/* Cards */}
       <div className="grid gap-4 sm:grid-cols-3">
-        {budgetItems.map((item) => (
-          <div key={item.id} className="rounded-xl border border-line bg-slate-50/60 p-4 space-y-2">
-            <div className="flex items-center gap-2">
-              <span className={cn("size-2.5 rounded-full shrink-0", dotColors[item.tone])} aria-hidden="true" />
-              <span className="text-[11px] font-bold text-muted uppercase tracking-wide">{item.share}% Porsi</span>
-            </div>
+        {budgetItems.map((item) => {
+          const allocatedAmount = Math.round((collected * item.share) / 100);
+          return (
+            <div key={item.id} className="rounded-xl border border-line bg-slate-50/60 p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <span className={cn("size-2.5 rounded-full shrink-0", dotColors[item.tone])} aria-hidden="true" />
+                <span className="text-[11px] font-bold text-muted uppercase tracking-wide">{item.share}% Porsi</span>
+              </div>
 
-            <div>
-              <p className="text-[13px] font-bold text-ink">{item.name}</p>
-              <p className="mt-1 text-xl font-bold text-ink">{formatRupiah(item.amount)}</p>
-              <p className="mt-0.5 text-[11px] text-muted">{item.description}</p>
-            </div>
+              <div>
+                <p className="text-[13px] font-bold text-ink">{item.name}</p>
+                <p className="mt-1 text-xl font-bold text-ink">{formatRupiah(allocatedAmount)}</p>
+                <p className="mt-0.5 text-[11px] text-muted">{item.description}</p>
+              </div>
 
-            <span
-              className={cn(
-                "inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
-                statusBadgeColors[item.statusTone] ?? "text-slate-700 bg-slate-100",
-              )}
-            >
-              {item.statusLabel}
-            </span>
-          </div>
-        ))}
+              <span
+                className={cn(
+                  "inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold",
+                  statusBadgeColors[item.statusTone] ?? "text-slate-700 bg-slate-100",
+                )}
+              >
+                {item.statusLabel}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

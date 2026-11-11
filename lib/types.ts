@@ -23,9 +23,10 @@ export interface PendingPayment {
   unit: string;
   postName: string;
   amount: number;
-  channel: PaymentChannel;
+  channel: string;
   submittedAgo: string;
   avatarTone: AvatarTone;
+  status?: string;
 }
 
 export type ActivityKind = "approved" | "reminder" | "new-resident" | "announcement";
@@ -53,7 +54,7 @@ export interface BudgetItem {
 
 /* ---------- Penghuni ---------- */
 export type ResidentStatus = "aktif" | "baru_registrasi";
-export type PaymentState = "lunas" | "belum_lunas" | "menunggu_verifikasi";
+export type PaymentState = "lunas" | "belum_lunas" | "menunggu_verifikasi" | "belum_ada_tagihan";
 
 export interface ResidentDetail {
   ownership: string;
@@ -61,6 +62,15 @@ export interface ResidentDetail {
   email: string;
   since: string;
   tenure: string;
+  nik?: string | null;
+  birthPlaceDate?: string | null;
+  residencyStatus?: string | null;
+  familyCount?: string | null;
+  rwArea?: string | null;
+  occupancyStatus?: string | null;
+  powerWater?: string | null;
+  vehicleText?: string | null;
+  photoUrl?: string | null;
   members: { name: string; role: string }[];
   emergencyContact: { name: string; phone: string };
   vehicles: { name: string; label: string; plate: string; rfid: string }[];
@@ -77,12 +87,15 @@ export interface ResidentDetail {
 
 export interface Resident {
   id: string;
+  dbId?: number;
   name: string;
+  email?: string;
   phone: string;
   block: string; // "Blok A2"
   number: string; // "No. 05"
   memberCount: number;
   memberSummary: string;
+  role?: string;
   status: ResidentStatus;
   payment: { state: PaymentState; label: string };
   detail?: ResidentDetail; // belum tersedia untuk semua warga

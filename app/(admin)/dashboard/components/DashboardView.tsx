@@ -93,21 +93,18 @@ export function DashboardView({ summary, payments, activities, announcements, we
     );
   }
 
-  const collectedPercent = percentOf(summary.collected, summary.target);
-  const paidPercent = percentOf(summary.paidUnits, summary.totalUnits);
+  const collectedPercent = summary.target > 0 ? percentOf(summary.collected, summary.target) : 0;
+  const remainingTarget = Math.max(0, summary.target - summary.collected);
+  const paidPercent = summary.totalUnits > 0 ? percentOf(summary.paidUnits, summary.totalUnits) : 0;
 
   return (
     <div className="space-y-6">
       {/* Hero */}
       <section className="rounded-2xl bg-gradient-to-r from-[#0d096b] via-[#100a78] to-[#3a3782] px-7 py-7 text-white shadow-sm sm:px-9">
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1 text-[11px] font-medium backdrop-blur-sm">
-          <span className="size-2 rounded-full bg-emerald-400" aria-hidden="true" />
-          Sistem Pembukuan Realtime Aktif • Periode {summary.period}
-        </div>
         <h1 className="mb-2 text-2xl font-bold tracking-tight sm:text-[26px]">Selamat Datang Kembali, {welcomeName}</h1>
         <p className="max-w-[950px] text-xs leading-relaxed text-slate-200">
-          Ringkasan operasional dan pembukuan iuran klaster <strong>{location}</strong>. Pantau arus kas masuk,
-          verifikasi konfirmasi warga, dan kelola ketertiban lingkungan secara presisi.
+          Ringkasan operasional pengelola <strong>{location}</strong> periode <strong>{summary.period}</strong>. Pantau
+          penghuni terdaftar, status tagihan &amp; konfirmasi pembayaran warga, serta informasi lingkungan secara terpadu.
         </p>
       </section>
 
@@ -141,7 +138,9 @@ export function DashboardView({ summary, payments, activities, announcements, we
           <div className="mt-6 space-y-4">
             <div className="space-y-1.5">
               <p className="text-[11px] font-medium text-slate-600">
-                Target {formatRupiah(summary.target)}
+                {summary.target > 0
+                  ? `Target ${formatRupiah(summary.target)}`
+                  : "Belum ada tagihan dikelola admin"}
               </p>
               <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                 <div
@@ -152,13 +151,12 @@ export function DashboardView({ summary, payments, activities, announcements, we
             </div>
 
             <div className="flex items-center justify-between pt-1">
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#e7f8f0] px-2.5 py-1 text-[11px] font-bold text-[#059669]">
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#e7f8f0] px-2.5 py-1 text-[11px] font-semibold text-[#059669]">
                 <TrendingUp className="size-3" />
-                <span>+12.4%</span>
-                <span className="font-normal text-[#059669]">bln lalu</span>
+                <span>{summary.growthLabel}</span>
               </span>
               <span className="text-xs font-medium text-slate-500">
-                Sisa Rp2.150.000
+                Sisa {formatRupiah(remainingTarget)}
               </span>
             </div>
           </div>
@@ -190,14 +188,14 @@ export function DashboardView({ summary, payments, activities, announcements, we
             </div>
 
             <p className="mt-3 text-[28px] font-extrabold tracking-tight text-slate-900">
-              {summary.paidUnits} unit
+              {summary.paidUnits} penghuni
             </p>
           </div>
 
           <div className="mt-6 space-y-4">
             <div className="space-y-1.5">
               <p className="text-[11px] font-medium text-slate-600">
-                Dari {summary.totalUnits} unit berpenghuni
+                Dari {summary.totalUnits} penghuni terdaftar
               </p>
               <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                 <div
@@ -234,7 +232,7 @@ export function DashboardView({ summary, payments, activities, announcements, we
             </div>
 
             <p className="mt-3 text-[28px] font-extrabold tracking-tight text-[#b91c1c]">
-              {summary.overdueUnits} unit
+              {summary.overdueUnits} penghuni
             </p>
           </div>
 
@@ -262,7 +260,7 @@ export function DashboardView({ summary, payments, activities, announcements, we
       <AnnouncementHistoryCard announcements={announcements} />
 
       {/* Distribusi & Alokasi Anggaran Bulanan */}
-      <BudgetDistribution />
+      <BudgetDistribution collected={summary.collected} period={summary.period} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useActionState } from "react";
+import { useEffect, useState, useActionState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
@@ -18,15 +18,19 @@ const NAME_LIMIT = 60;
 const PRESETS = [15_000, 20_000, 30_000, 50_000, 75_000];
 const BLOCKS = ["Blok A", "Blok B", "Blok C", "Blok D", "Blok E"];
 
-type Scheme = "flat" | "proporsional";
 type FrekuensiType = "setiap_bulan" | "sekali" | "custom";
 
 const checkboxClass = "mt-0.5 size-4 shrink-0 rounded border-line accent-primary";
 
-export function BuatIuranForm() {
+interface BuatIuranFormProps {
+  embedded?: boolean;
+  onSuccess?: () => void;
+  onCancel?: () => void;
+}
+
+export function BuatIuranForm({ embedded = false, onSuccess, onCancel }: BuatIuranFormProps) {
   const [state, formAction, isPending] = useActionState(createIuranAction, {});
   const [name, setName] = useState("");
-  const [scheme, setScheme] = useState<Scheme>("flat");
   const [amount, setAmount] = useState<number>(20_000);
 
   const [sasaran] = useState<string>("semua");
@@ -34,6 +38,12 @@ export function BuatIuranForm() {
   const [frekuensiType, setFrekuensiType] = useState<FrekuensiType>("setiap_bulan");
   const [frekuensiDetail, setFrekuensiDetail] = useState("3 Bulan Sekali");
   const [isFrekuensiOpen, setIsFrekuensiOpen] = useState(false);
+
+  useEffect(() => {
+    if (state?.success && onSuccess) {
+      onSuccess();
+    }
+  }, [state?.success, onSuccess]);
 
   const toggleBlock = (block: string) => {
     setSelectedBlocks((prev) =>
@@ -43,7 +53,8 @@ export function BuatIuranForm() {
 
   return (
     <form action={formAction} className="space-y-6">
-      <input type="hidden" name="scheme" value={scheme} />
+      <input type="hidden" name="embedded" value={embedded ? "true" : "false"} />
+      <input type="hidden" name="scheme" value="flat" />
       <input type="hidden" name="sasaran" value={sasaran} />
       <input type="hidden" name="selectedBlocks" value={JSON.stringify(selectedBlocks)} />
       <input type="hidden" name="frekuensiType" value={frekuensiType} />
@@ -54,25 +65,27 @@ export function BuatIuranForm() {
         </div>
       )}
 
-      <PageHeader
-        eyebrow={
-          <>
-            <Link href="/dashboard" className="hover:text-primary hover:underline">Dashboard</Link>
-            <ChevronRight className="size-3" aria-hidden="true" />
-            <Link href="/iuran" className="hover:text-primary hover:underline">Iuran & Tagihan</Link>
-          </>
-        }
-        title="Buat Master Pos Iuran Baru"
-        description="Terbitkan skema tagihan iuran baru untuk seluruh warga klaster, blok tertentu, atau iuran kegiatan insidental secara terstruktur dan terotomatisasi."
-        actions={
-          <>
-            <ButtonLink href="/iuran" variant="ghost">
-              <ArrowLeft className="size-4" aria-hidden="true" /> Kembali ke Manajemen Iuran
-            </ButtonLink>
-            <Button variant="outline" type="button">Simpan Draf</Button>
-          </>
-        }
-      />
+      {!embedded && (
+        <PageHeader
+          eyebrow={
+            <>
+              <Link href="/dashboard" className="hover:text-primary hover:underline">Dashboard</Link>
+              <ChevronRight className="size-3" aria-hidden="true" />
+              <Link href="/iuran" className="hover:text-primary hover:underline">Iuran &amp; Tagihan</Link>
+            </>
+          }
+          title="Buat Iuran Baru"
+          description="Terbitkan skema tagihan iuran baru untuk seluruh warga klaster atau blok tertentu secara terstruktur."
+          actions={
+            <>
+              <ButtonLink href="/iuran" variant="ghost">
+                <ArrowLeft className="size-4" aria-hidden="true" /> Kembali ke Manajemen Iuran
+              </ButtonLink>
+              <Button variant="outline" type="button">Simpan Draf</Button>
+            </>
+          }
+        />
+      )}
 
       <FormSection
         marker="1"
@@ -120,8 +133,8 @@ export function BuatIuranForm() {
           defaultValue="semua"
           columnsClassName="sm:grid-cols-3"
           options={[
-            { value: "semua", label: "SEMUA WARGA", description: "72 KK • Seluruh unit terdaftar" },
-            { value: "dihuni", label: "UNIT DIHUNI", description: "72 KK • Pemilik rumah aktif" },
+            { value: "semua", label: "SEMUA WARGA", description: "Seluruh penghuni terdaftar" },
+            { value: "dihuni", label: "UNIT DIHUNI", description: "Penghuni rumah aktif" },
             { value: "blok", label: "PILIH BLOK", description: selectedBlocks.length > 0 ? `Blok ${selectedBlocks.join(", ")}` : "Pilihan kavling tertentu" },
           ]}
         />
@@ -154,27 +167,9 @@ export function BuatIuranForm() {
         </div>
 
         <div className="space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs font-semibold text-ink">
-              Skema & Besaran Nominal Tagihan <span className="text-danger" aria-hidden="true">*</span>
-            </p>
-            <div role="group" aria-label="Skema tagihan" className="flex gap-1 rounded-full bg-slate-100 p-1">
-              {([["flat", "Flat per Rumah / KK"], ["proporsional", "Proporsional Kavling"]] as const).map(([value, label]) => (
-                <button
-                  key={value}
-                  type="button"
-                  aria-pressed={scheme === value}
-                  onClick={() => setScheme(value)}
-                  className={cn(
-                    "cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors",
-                    scheme === value ? "bg-primary text-white" : "text-muted hover:text-ink",
-                  )}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
+          <p className="text-xs font-semibold text-ink">
+            Besaran Nominal Tagihan <span className="text-danger" aria-hidden="true">*</span>
+          </p>
 
           <div>
             <div className="flex items-center gap-3">
@@ -230,9 +225,9 @@ export function BuatIuranForm() {
 
         <div className="flex flex-col gap-4 rounded-xl border border-line p-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs font-semibold text-ink">Rekening Kas RT Penerima</p>
-            <p className="mt-1 text-sm font-semibold text-ink">BCA - Kas Paguyuban RT 04 GateLand</p>
-            <p className="text-xs text-muted">No. Rek: 827-029-1920, a.n. Kas Paguyuban Sekar Indah</p>
+            <p className="text-xs font-semibold text-ink">Rekening Kas Penerima</p>
+            <p className="mt-1 text-sm font-semibold text-ink">BCA - Kas Paguyuban Cluster GateLand</p>
+            <p className="text-xs text-muted">No. Rek: 827-029-1920, a.n. Kas Paguyuban Cluster GateLand</p>
             <div className="mt-2 flex gap-2">
               <Badge tone="green">Aktif</Badge>
               <Badge tone="indigo">Utama</Badge>
@@ -331,20 +326,20 @@ export function BuatIuranForm() {
             )}
           </div>
 
-          <FormInput name="mulaiBerlaku" label="Mulai Berlaku Pada Periode" defaultValue="Oktober 2026" />
+          <FormInput name="mulaiBerlaku" label="Mulai Berlaku Pada Periode" defaultValue="November 2026" />
         </div>
 
         <fieldset className="space-y-3">
           <legend className="mb-1 text-sm font-bold text-ink">Otomasi & Kanal Pemberitahuan</legend>
           {[
-            { name: "pushNotif", title: "Push Notification Aplikasi GateLand", desc: "Kirim notifikasi tagihan otomatis pada tgl 10 awal bulan ke ponsel seluruh warga." },
+            { name: "pushNotif", title: "Push Notification Aplikasi GateLand", desc: "" },
             { name: "banner", title: "Banner Pengingat di Beranda Warga", desc: "Tampilkan banner catatan pos baru pada dashboard warga yang belum membayar." },
           ].map((item) => (
             <label key={item.name} className="flex items-start gap-2.5 text-xs">
               <input type="checkbox" name={item.name} defaultChecked className={checkboxClass} />
               <span>
                 <span className="block font-semibold text-ink">{item.title}</span>
-                <span className="text-muted">{item.desc}</span>
+                {item.desc && <span className="text-muted">{item.desc}</span>}
               </span>
             </label>
           ))}
@@ -352,7 +347,11 @@ export function BuatIuranForm() {
       </FormSection>
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-        <ButtonLink href="/iuran" variant="outline">Batal / Kembali</ButtonLink>
+        {embedded && onCancel ? (
+          <Button type="button" variant="outline" onClick={onCancel}>Batal</Button>
+        ) : (
+          <ButtonLink href="/iuran" variant="outline">Batal / Kembali</ButtonLink>
+        )}
         <Button type="submit" disabled={isPending}>
           {isPending ? "Memproses..." : "Terbitkan Iuran"}
         </Button>
