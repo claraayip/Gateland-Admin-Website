@@ -1,8 +1,9 @@
 "use client";
 
-import { Menu, Megaphone, PanelLeftClose, PanelLeftOpen, Search, User } from "lucide-react";
+import { Menu, PanelLeftClose, PanelLeftOpen, Search, User } from "lucide-react";
 import Link from "next/link";
-import { currentUser } from "@/lib/data";
+import { usePathname } from "next/navigation";
+import { getHeaderAction } from "@/lib/navigation";
 
 interface HeaderProps {
   mobileOpen: boolean;
@@ -20,6 +21,10 @@ export function Header({
   onOpenMobileMenu,
   onToggleCollapsed,
 }: HeaderProps) {
+  const pathname = usePathname();
+  const action = getHeaderAction(pathname);
+  const ActionIcon = action.icon;
+
   return (
     <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-slate-100 bg-white/95 px-4 py-3 backdrop-blur sm:gap-4 sm:px-6 lg:px-8 font-sans">
       {/* Mobile: buka drawer */}
@@ -61,13 +66,13 @@ export function Header({
 
       {/* Action Button & Profile */}
       <div className="ml-auto flex items-center gap-4">
-        {/* + Buat Pengumuman */}
+        {/* Tombol aksi dinamis mengikuti halaman aktif */}
         <Link
-          href="/pengumuman/buat"
+          href={action.href}
           className="inline-flex items-center gap-2 rounded-full bg-[#050C9C] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-md hover:bg-[#040878] transition cursor-pointer"
         >
-          <Megaphone className="size-4" />
-          <span>+ Buat Pengumuman</span>
+          <ActionIcon className="size-4" aria-hidden="true" />
+          <span>+ {action.label}</span>
         </Link>
 
         {/* User Info */}
