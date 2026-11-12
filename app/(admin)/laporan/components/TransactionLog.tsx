@@ -71,10 +71,10 @@ const columns: Column<Transaction>[] = [
 ];
 
 export function TransactionLog({ transactions }: { transactions: Transaction[] }) {
-  const [filter, setFilter] = useState<Filter>("keluar");
+  const [filter, setFilter] = useState<Filter>("semua");
 
   const rows = transactions.filter((t) =>
-    filter === "semua" ? true : filter === "masuk" ? t.amount > 0 : t.amount < 0,
+    filter === "semua" ? true : filter === "masuk" ? t.amount >= 0 : t.amount < 0,
   );
 
   return (

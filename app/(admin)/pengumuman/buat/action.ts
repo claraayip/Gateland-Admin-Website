@@ -10,16 +10,18 @@ import { redirect } from "next/navigation";
 export type FormState = {
   errors?: Record<string, string[]>;
   message?: string;
+  success?: boolean;
 };
 
 export async function createAnnouncementAction(
   prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
+  const isEmbedded = formData.get("embedded") === "true";
   let adminUser;
   try {
     adminUser = await requireAdmin();
-  } catch (err) {
+  } catch {
     return {
       message: "Gagal: Anda tidak memiliki akses untuk menerbitkan pengumuman.",
     };
@@ -67,5 +69,8 @@ export async function createAnnouncementAction(
   });
 
   revalidatePath("/dashboard");
+  if (isEmbedded) {
+    return { success: true };
+  }
   redirect("/dashboard");
 }

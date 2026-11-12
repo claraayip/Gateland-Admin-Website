@@ -10,6 +10,7 @@ import { BudgetDistribution } from "./BudgetDistribution";
 import { formatRupiah, percentOf } from "@/lib/format";
 import type { ActivityItem, DashboardSummary, PendingPayment } from "@/lib/types";
 import type { AnnouncementItem } from "@/lib/data";
+import { verifyPaymentAction } from "../actions";
 
 interface DashboardViewProps {
   summary: DashboardSummary;
@@ -36,60 +37,74 @@ export function DashboardView({ summary, payments, activities, announcements, we
   }, [isDetailed, router]);
 
   const [pending, setPending] = useState(payments);
+  const [prevPayments, setPrevPayments] = useState(payments);
+  const [notice, setNotice] = useState<string | null>(null);
 
-  useEffect(() => {
+  if (payments !== prevPayments) {
+    setPrevPayments(payments);
     setPending(payments);
-  }, [payments]);
+  }
 
-  // Real-time polling setiap 4 detik agar pembayaran QRIS mobile langsung terdeteksi
+  // Real-time polling setiap 12 detik agar data pembayaran dan pengumuman tetap sinkron
   useEffect(() => {
     const timer = setInterval(() => {
       router.refresh();
-    }, 4000);
+    }, 12000);
     return () => clearInterval(timer);
   }, [router]);
 
   const handleDecision = useCallback(
-    (id: string, decision: Decision) => {
+    async (id: string, decision: Decision) => {
+      const target = pending.find((payment) => payment.id === id);
+      if (!target) return;
       setPending((list) => list.filter((payment) => payment.id !== id));
+      setNotice(`Pembayaran ${target.residentName} ${decision === "approved" ? "disetujui" : "ditolak"}.`);
+      
+      try {
+        await verifyPaymentAction(id, decision);
+      } catch (err) {
+        console.error("Gagal verifikasi pembayaran ke server:", err);
+      }
     },
-    [],
+    [pending],
   );
 
-  return (
-    <div className="space-y-6 font-sans">
-      {/* ===== Hero Welcome Banner ===== */}
-      <section className="rounded-2xl bg-gradient-to-r from-[#060B7E] via-[#08129C] to-[#060B7E] p-7 sm:p-8 text-white shadow-xl relative overflow-hidden">
-        {/* Subtle Ambient Glow */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-20 -top-20 size-80 rounded-full bg-blue-500/15 blur-3xl"
-        />
+  const verification = (
+    <PaymentVerification
+      payments={pending}
+      detailed={isDetailed}
+      onToggleDetailed={toggleDetailedView}
+      onDecision={handleDecision}
+    />
+  );
 
-        <div className="relative z-10">
-          {/* Pill Badge */}
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/10 px-3.5 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
-            <span className="size-2 rounded-full bg-emerald-400" />
-            <span>Sistem Pembukuan Realtime Aktif • Periode {summary.period}</span>
-          </div>
+  const liveRegion = (
+    <p role="status" aria-live="polite" className={notice ? "mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-xs font-medium text-emerald-800" : "sr-only"}>
+      {notice}
+    </p>
+  );
 
-          {/* Heading */}
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2.5">
-            Selamat Datang Kembali, {welcomeName}
-          </h1>
+  if (isDetailed) {
+    return (
+      <div>
+        {liveRegion}
+        {verification}
+      </div>
+    );
+  }
+
+  const collectedPercent = summary.target > 0 ? percentOf(summary.collected, summary.target) : 0;
+  const remainingTarget = Math.max(0, summary.target - summary.collected);
+  const paidPercent = summary.totalUnits > 0 ? percentOf(summary.paidUnits, summary.totalUnits) : 0;
 
   return (
     <div className="space-y-6">
       {/* Hero */}
       <section className="rounded-2xl bg-gradient-to-r from-[#0d096b] via-[#100a78] to-[#3a3782] px-7 py-7 text-white shadow-sm sm:px-9">
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1 text-[11px] font-medium backdrop-blur-sm">
-          <span className="size-2 rounded-full bg-emerald-400" aria-hidden="true" />
-          Sistem Pembukuan Realtime Aktif • Periode {summary.period}
-        </div>
         <h1 className="mb-2 text-2xl font-bold tracking-tight sm:text-[26px]">Selamat Datang Kembali, {welcomeName}</h1>
         <p className="max-w-[950px] text-xs leading-relaxed text-slate-200">
-          Ringkasan operasional dan pembukuan iuran klaster <strong>{location}</strong>. Pantau arus kas masuk,
-          verifikasi konfirmasi warga, dan kelola ketertiban lingkungan secara presisi.
+          Ringkasan operasional pengelola <strong>{location}</strong> periode <strong>{summary.period}</strong>. Pantau
+          penghuni terdaftar, status tagihan &amp; konfirmasi pembayaran warga, serta informasi lingkungan secara terpadu.
         </p>
       </section>
 
@@ -123,7 +138,9 @@ export function DashboardView({ summary, payments, activities, announcements, we
           <div className="mt-6 space-y-4">
             <div className="space-y-1.5">
               <p className="text-[11px] font-medium text-slate-600">
-                Target {formatRupiah(summary.target)}
+                {summary.target > 0
+                  ? `Target ${formatRupiah(summary.target)}`
+                  : "Belum ada tagihan dikelola admin"}
               </p>
               <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                 <div
@@ -134,13 +151,12 @@ export function DashboardView({ summary, payments, activities, announcements, we
             </div>
 
             <div className="flex items-center justify-between pt-1">
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#e7f8f0] px-2.5 py-1 text-[11px] font-bold text-[#059669]">
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#e7f8f0] px-2.5 py-1 text-[11px] font-semibold text-[#059669]">
                 <TrendingUp className="size-3" />
-                <span>+12.4%</span>
-                <span className="font-normal text-[#059669]">bln lalu</span>
+                <span>{summary.growthLabel}</span>
               </span>
               <span className="text-xs font-medium text-slate-500">
-                Sisa Rp2.150.000
+                Sisa {formatRupiah(remainingTarget)}
               </span>
             </div>
           </div>
@@ -172,14 +188,14 @@ export function DashboardView({ summary, payments, activities, announcements, we
             </div>
 
             <p className="mt-3 text-[28px] font-extrabold tracking-tight text-slate-900">
-              {summary.paidUnits} unit
+              {summary.paidUnits} penghuni
             </p>
           </div>
 
           <div className="mt-6 space-y-4">
             <div className="space-y-1.5">
               <p className="text-[11px] font-medium text-slate-600">
-                Dari {summary.totalUnits} unit berpenghuni
+                Dari {summary.totalUnits} penghuni terdaftar
               </p>
               <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
                 <div
@@ -216,7 +232,7 @@ export function DashboardView({ summary, payments, activities, announcements, we
             </div>
 
             <p className="mt-3 text-[28px] font-extrabold tracking-tight text-[#b91c1c]">
-              {summary.overdueUnits} unit
+              {summary.overdueUnits} penghuni
             </p>
           </div>
 
@@ -237,16 +253,6 @@ export function DashboardView({ summary, payments, activities, announcements, we
           {liveRegion}
           {verification}
         </div>
-      </section>
-
-      {/* ===== Grid Tengah: Verifikasi Pembayaran (Kiri) & Aktivitas Live (Kanan) ===== */}
-      <section className="grid items-start gap-6 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_360px]">
-        <PaymentVerification
-          payments={pending}
-          detailed={isDetailed}
-          onToggleDetailed={toggleDetailedView}
-          onDecision={handleDecision}
-        />
         <ActivityTimeline items={activities} />
       </section>
 
@@ -254,7 +260,7 @@ export function DashboardView({ summary, payments, activities, announcements, we
       <AnnouncementHistoryCard announcements={announcements} />
 
       {/* Distribusi & Alokasi Anggaran Bulanan */}
-      <BudgetDistribution />
+      <BudgetDistribution collected={summary.collected} period={summary.period} />
     </div>
   );
 }

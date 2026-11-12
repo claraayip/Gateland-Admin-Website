@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useActionState } from "react";
+import { useEffect, useState, useActionState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
   Calendar,
   ChevronRight,
   Clock,
-  CloudCheck,
   Megaphone,
   Radio,
   Save,
@@ -24,26 +23,34 @@ import { cn } from "@/lib/cn";
 
 const TITLE_LIMIT = 120;
 
-export function BuatPengumumanForm() {
+interface BuatPengumumanFormProps {
+  embedded?: boolean;
+  onSuccess?: () => void;
+  onCancel?: () => void;
+}
+
+export function BuatPengumumanForm({ embedded = false, onSuccess, onCancel }: BuatPengumumanFormProps) {
   const [state, formAction, isPending] = useActionState(createAnnouncementAction, {});
   
   // States form
-  const [title, setTitle] = useState("Kerja Bakti Massal");
+  const [title, setTitle] = useState("");
   const [kategori, setKategori] = useState("kegiatan");
-  const [urgensi, setUrgensi] = useState("agenda");
-  const [isi, setIsi] = useState(
-    "Yth. Bapak/Ibu Warga RT 04 / RW 08,\n\n" +
-    "Menghadapi datangnya intensitas curah hujan tinggi akhir bulan ini, Pengurus RT 04 mengundang seluruh warga untuk berpartisipasi dalam agenda Kerja Bakti Lingkungan.\n\n" +
-    "Fokus kegiatan:\n" +
-    "1. Pengecekan dan pembersihan endapan sedimen got depan rumah masing-masing serta saluran utama Blok A, B, dan C."
-  );
-  const [lokasi, setLokasi] = useState("Lingkungan RT 04/ RW 08 Cluster Sekar Indah");
-  const [tanggal, setTanggal] = useState("2026-09-29");
-  const [jam, setJam] = useState("07:00 - 11:30 WIB");
+  const [urgensi, setUrgensi] = useState("biasa");
+  const [isi, setIsi] = useState("");
+  const [lokasi, setLokasi] = useState("");
+  const [tanggal, setTanggal] = useState("");
+  const [jam, setJam] = useState("");
   const [targetWarga, setTargetWarga] = useState("seluruh");
 
+  useEffect(() => {
+    if (state?.success && onSuccess) {
+      onSuccess();
+    }
+  }, [state?.success, onSuccess]);
+
   return (
-    <form action={formAction} className="mx-auto max-w-[1000px] space-y-6 pb-12">
+    <form action={formAction} className={embedded ? "space-y-6" : "mx-auto max-w-[1000px] space-y-6 pb-12"}>
+      <input type="hidden" name="embedded" value={embedded ? "true" : "false"} />
       {state?.message && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-xs font-semibold text-red-600">
           {state.message}
@@ -51,55 +58,57 @@ export function BuatPengumumanForm() {
       )}
 
       {/* Header bar atas: Breadcrumb & Tombol Aksi Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500">
-            <Link href="/dashboard" className="flex items-center gap-1 hover:text-slate-900">
-              <span className="grid size-4 place-items-center">⊞</span> Dashboard
-            </Link>
-            <ChevronRight className="size-3 text-slate-400" />
-            <span className="hover:text-slate-900 cursor-pointer">Pengumuman &amp; Warga</span>
-            <ChevronRight className="size-3 text-slate-400" />
-            <span className="font-semibold text-slate-900">Buat Pengumuman Baru</span>
-          </nav>
+      {!embedded && (
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            {/* Breadcrumb */}
+            <nav className="flex items-center gap-1.5 text-xs text-slate-500">
+              <Link href="/dashboard" className="flex items-center gap-1 hover:text-slate-900">
+                <span className="grid size-4 place-items-center">⊞</span> Dashboard
+              </Link>
+              <ChevronRight className="size-3 text-slate-400" />
+              <span className="hover:text-slate-900 cursor-pointer">Pengumuman &amp; Warga</span>
+              <ChevronRight className="size-3 text-slate-400" />
+              <span className="font-semibold text-slate-900">Buat Pengumuman Baru</span>
+            </nav>
 
-          {/* Action pills di bawah breadcrumb */}
-          <div className="mt-2.5 flex items-center gap-3">
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50"
-            >
-              <ArrowLeft className="size-3.5" />
-              Kembali ke Dashboard
-            </Link>
+            {/* Action pills di bawah breadcrumb */}
+            <div className="mt-2.5 flex items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50"
+              >
+                <ArrowLeft className="size-3.5" />
+                Kembali ke Dashboard
+              </Link>
 
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-primary">
-              <span className="size-2 rounded-full bg-primary" />
-              Mode Editor Aktif
-            </span>
-          </div>
-        </div>
-
-        {/* Draf status & tombol simpan draf */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-right text-xs text-slate-500">
-            <span className="text-slate-400 text-sm">☁</span>
-            <div className="leading-tight">
-              <p className="text-[11px] text-slate-400">Draf tersimpan otomatis:</p>
-              <p className="font-semibold text-slate-700">10:42 WIB</p>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-primary">
+                <span className="size-2 rounded-full bg-primary" />
+                Mode Editor Aktif
+              </span>
             </div>
           </div>
 
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100"
-          >
-            <Save className="size-4 text-slate-500" />
-            Simpan Draf
-          </button>
+          {/* Draf status & tombol simpan draf */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-right text-xs text-slate-500">
+              <span className="text-slate-400 text-sm">☁</span>
+              <div className="leading-tight">
+                <p className="text-[11px] text-slate-400">Draf tersimpan otomatis:</p>
+                <p className="font-semibold text-slate-700">10:42 WIB</p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100"
+            >
+              <Save className="size-4 text-slate-500" />
+              Simpan Draf
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* KARTU 1: Detail Pengumuman */}
       <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs sm:p-8 space-y-6">
@@ -292,7 +301,7 @@ export function BuatPengumumanForm() {
             type="text"
             value={lokasi}
             onChange={(e) => setLokasi(e.target.value)}
-            placeholder="Lingkungan RT 04 / RW 08 Cluster Sekar Indah"
+            placeholder="Lingkungan Cluster GateLand"
             className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] px-4 py-3 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
@@ -318,7 +327,7 @@ export function BuatPengumumanForm() {
             <input
               type="text"
               name="tanggal"
-              value={tanggal === "2026-09-29" ? "Minggu, 29 September 2026" : tanggal}
+              value={tanggal === "2026-09-29" ? "Minggu, 15 November 2026" : tanggal}
               onChange={(e) => setTanggal(e.target.value)}
               className="w-full rounded-xl border border-slate-200 bg-[#f8fafc] px-4 py-2.5 text-xs font-medium text-slate-800 focus:border-primary focus:bg-white focus:outline-none"
             />
@@ -354,8 +363,8 @@ export function BuatPengumumanForm() {
           {[
             {
               id: "seluruh",
-              title: "Seluruh Warga RT 04",
-              desc: "Total 72 Unit Rumah",
+              title: "Seluruh Warga Cluster GateLand",
+              desc: "Semua penghuni yang terdaftar di aplikasi GateLand",
             },
             {
               id: "blok_tertentu",
@@ -398,13 +407,24 @@ export function BuatPengumumanForm() {
 
       {/* Bottom Bar: Action buttons */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-3">
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-2 rounded-xl bg-[#fee2e2] px-5 py-3 text-xs font-bold text-[#b91c1c] transition-colors hover:bg-red-200"
-        >
-          <XCircle className="size-4" />
-          Batal / Kembali ke Dashboard
-        </Link>
+        {embedded && onCancel ? (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#fee2e2] px-5 py-3 text-xs font-bold text-[#b91c1c] transition-colors hover:bg-red-200"
+          >
+            <XCircle className="size-4" />
+            Batal
+          </button>
+        ) : (
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#fee2e2] px-5 py-3 text-xs font-bold text-[#b91c1c] transition-colors hover:bg-red-200"
+          >
+            <XCircle className="size-4" />
+            Batal / Kembali ke Dashboard
+          </Link>
+        )}
 
         <div className="flex items-center gap-3">
           <button

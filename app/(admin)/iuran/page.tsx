@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
-import { Calendar, ChevronRight, Clock, Download, FileText, HandCoins, History, ShieldCheck, TrendingUp, Wrench } from "lucide-react";
+import { Suspense } from "react";
+import { Calendar, ChevronRight, Clock, FileText, HandCoins, History, ShieldCheck, TrendingUp, Wrench } from "lucide-react";
 import { IuranItemCard } from "./components/IuranItemCard";
-import { Button } from "@/components/ui/Button";
+import { IuranActions } from "./components/IuranActions";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { StatCard } from "@/components/ui/StatCard";
 import { Tabs } from "@/components/ui/Tabs";
-import { dashboardSummary, iuranPosts, iuranSummary } from "@/lib/data";
+import { getLiveIuranData } from "@/lib/services/keuangan.service";
 import { formatRupiah, percentOf } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Kelola Iuran" };
 
 function Placeholder({ children }: { children: string }) {
@@ -19,30 +21,29 @@ function Placeholder({ children }: { children: string }) {
   );
 }
 
-export default function IuranPage() {
-  const remaining = iuranSummary.periodTarget - iuranSummary.periodCollected;
-  const collectedPercent = percentOf(iuranSummary.periodCollected, iuranSummary.periodTarget);
+async function IuranContent() {
+  const data = await getLiveIuranData();
+  const remaining = Math.max(0, data.periodTarget - data.periodCollected);
+  const collectedPercent = data.periodTarget > 0 ? percentOf(data.periodCollected, data.periodTarget) : 0;
 
-  const mandatory = iuranPosts.filter((post) => post.accent === "indigo");
-  const monthlyTariff = mandatory.reduce((sum, post) => sum + post.price, 0);
-  const special = iuranPosts.find((post) => post.progress);
-  const specialPercent = special?.progress ? Math.round(percentOf(special.progress.collected, special.progress.target)) : 0;
+  const mandatoryTemplates = data.posts.filter((post) => post.accent === "indigo");
+  const monthlyTariff = mandatoryTemplates.reduce((sum, post) => sum + post.price, 0);
 
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow={
           <>
-            <span>Klaster Gardenia & Boulevard</span>
+            <span>Cluster GateLand</span>
             <ChevronRight className="size-3" aria-hidden="true" />
-            <span>Manajemen Iuran & Tagihan Warga</span>
+            <span>Manajemen Iuran &amp; Tagihan Warga</span>
           </>
         }
         title={
           <>
-            Kelola & Master Pos Iuran{" "}
+            Kelola Iuran{" "}
             <span className="ml-1 inline-block rounded-full bg-indigo-100 px-3 py-1 align-middle text-xs font-semibold text-primary">
-              RT 04 / RW 08
+              Cluster GateLand
             </span>
           </>
         }
@@ -51,13 +52,15 @@ export default function IuranPage() {
             <div className="flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-xs text-muted">
               <Calendar className="size-4" aria-hidden="true" />
               <span>
-                Periode: <strong className="text-ink">{dashboardSummary.period}</strong>
+                Periode: <strong className="text-ink">{data.period}</strong>
               </span>
               <span className="size-2 rounded-full bg-success" aria-hidden="true" />
             </div>
-            <Button variant="outline">
-              <Download className="size-4" aria-hidden="true" /> Unduh Rekap (Excel/PDF)
-            </Button>
+            <IuranActions
+              period={data.period}
+              registeredCount={data.registeredResidentsCount}
+              posts={data.posts}
+            />
           </>
         }
       />
@@ -65,8 +68,12 @@ export default function IuranPage() {
       <section aria-label="Ringkasan iuran" className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         <StatCard
           label="Target Periode Berjalan"
-          value={formatRupiah(iuranSummary.periodCollected)}
-          hint={`dari target total ${formatRupiah(iuranSummary.periodTarget)}`}
+          value={formatRupiah(data.periodCollected)}
+          hint={
+            data.hasBills
+              ? `dari target total ${formatRupiah(data.periodTarget)}`
+              : "Belum ada tagihan diterbitkan pada periode ini"
+          }
           icon={HandCoins}
         >
           <div className="space-y-1.5">
@@ -82,35 +89,33 @@ export default function IuranPage() {
 
         <StatCard
           label="Iuran Rutin Wajib"
-          value={`${mandatory.length} Pos Utama`}
-          hint="Kebersihan, Keamanan, Kas RT"
+          value={data.hasBills ? `${data.mandatoryPostsCount} Pos Aktif` : "0 Pos Aktif"}
+          hint="Kebersihan, Keamanan, Kas Klaster"
           icon={ShieldCheck}
           tone="secondary"
         >
           <div className="mt-auto flex items-center justify-between border-t border-line pt-3 text-[11px]">
-            <span className="text-muted">Total Tarif: {formatRupiah(monthlyTariff)}/KK</span>
-            <span className="font-semibold text-muted">{iuranSummary.totalKK} KK Wajib</span>
+            <span className="text-muted">Referensi Tarif: {formatRupiah(monthlyTariff)}/Penghuni</span>
+            <span className="font-semibold text-muted">{data.registeredResidentsCount} Penghuni Terdaftar</span>
           </div>
         </StatCard>
 
-        {special && (
-          <StatCard
-            label="Iuran Insidental/Khusus"
-            value="1 Pos Berjalan"
-            hint={special.title}
-            icon={Wrench}
-            tone="secondary"
-          >
-            <div className="mt-auto flex items-center justify-between border-t border-line pt-3 text-[11px]">
-              <span className="inline-flex items-center gap-1.5 text-muted">
-                <Clock className="size-3.5" aria-hidden="true" /> Jatuh Tempo <strong className="text-ink">25 Okt</strong>
-              </span>
-              <span className="rounded-full bg-green-100 px-2 py-1 text-[10px] font-semibold text-green-800">
-                {specialPercent}% Progres
-              </span>
-            </div>
-          </StatCard>
-        )}
+        <StatCard
+          label="Iuran Insidental/Khusus"
+          value={`${data.incidentalPostsCount} Pos Berjalan`}
+          hint={data.incidentalPostsCount > 0 ? "Tagihan khusus sedang aktif" : "Belum ada pos insidental aktif"}
+          icon={Wrench}
+          tone="secondary"
+        >
+          <div className="mt-auto flex items-center justify-between border-t border-line pt-3 text-[11px]">
+            <span className="inline-flex items-center gap-1.5 text-muted">
+              <Clock className="size-3.5" aria-hidden="true" /> Periode <strong className="text-ink">{data.period}</strong>
+            </span>
+            <span className="rounded-full bg-slate-100 px-2 py-1 text-[10px] font-semibold text-slate-700">
+              {data.incidentalPostsCount > 0 ? "Aktif" : "0% Progres"}
+            </span>
+          </div>
+        </StatCard>
       </section>
 
       <Tabs
@@ -120,13 +125,13 @@ export default function IuranPage() {
             id: "pos",
             label: (
               <>
-                <FileText className="size-4" aria-hidden="true" /> Daftar Pos Iuran & Master Tarif
-                <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] text-white">{iuranPosts.length}</span>
+                <FileText className="size-4" aria-hidden="true" /> Daftar Pos Iuran &amp; Tarif
+                <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] text-white">{data.posts.length}</span>
               </>
             ),
             panel: (
               <div className="space-y-5">
-                {iuranPosts.map((post) => (
+                {data.posts.map((post) => (
                   <IuranItemCard key={post.id} post={post} />
                 ))}
               </div>
@@ -139,19 +144,27 @@ export default function IuranPage() {
                 <History className="size-4" aria-hidden="true" /> Riwayat Periode Tagihan
               </>
             ),
-            panel: <Placeholder>Riwayat periode tagihan belum dimigrasikan.</Placeholder>,
+            panel: <Placeholder>Belum ada riwayat periode tagihan yang diterbitkan oleh admin.</Placeholder>,
           },
           {
             id: "khusus",
             label: (
               <>
-                <HandCoins className="size-4" aria-hidden="true" /> Iuran Khusus & Sumbangan
+                <HandCoins className="size-4" aria-hidden="true" /> Iuran Khusus &amp; Sumbangan
               </>
             ),
-            panel: <Placeholder>Daftar iuran khusus & sumbangan belum dimigrasikan.</Placeholder>,
+            panel: <Placeholder>Belum ada pos iuran khusus atau sumbangan yang berjalan.</Placeholder>,
           },
         ]}
       />
     </div>
+  );
+}
+
+export default function IuranPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-sm text-slate-400">Memuat data iuran...</div>}>
+      <IuranContent />
+    </Suspense>
   );
 }

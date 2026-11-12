@@ -13,229 +13,169 @@ import type {
 } from "./types";
 
 export const currentUser = {
-  shortName: "Andi Putra Wijaya",
+  shortName: "Admin GateLand",
   role: "Pengelola",
-  welcomeName: "Bpk. Andi Putra Wijaya",
-  location: "GateLand RT 04 / RW 08",
+  welcomeName: "Admin GateLand",
+  location: "Cluster GateLand",
 };
 
 /* ======================= DASHBOARD ======================= */
 
 export const dashboardSummary: DashboardSummary = {
-  period: "September 2026",
-  collected: 7_350_000,
-  target: 45_000_000,
-  growthLabel: "+12.4% bln lalu",
-  paidUnits: 67,
-  totalUnits: 72,
-  qrisUnits: 55,
-  overdueUnits: 5,
-  overdueAmount: 875_000,
+  period: "November 2026",
+  collected: 0,
+  target: 0,
+  growthLabel: "Periode berjalan",
+  paidUnits: 0,
+  totalUnits: 0,
+  qrisUnits: 0,
+  overdueUnits: 0,
+  overdueAmount: 0,
 };
 
-export const pendingPayments: PendingPayment[] = [
-  { id: "p1", residentName: "Ibu Azizah Pratama", unit: "Blok B4 / No. 12", postName: "Iuran Kebersihan dan Keamanan", amount: 175_000, channel: "BCA Transfer", submittedAgo: "September 2026", avatarTone: "blue" },
-  { id: "p2", residentName: "Ibu Rahayu Eka", unit: "Blok A2 / No. 05", postName: "Iuran Rutin", amount: 200_000, channel: "BRI Transfer", submittedAgo: "September 2026", avatarTone: "purple" },
-];
+export const pendingPayments: PendingPayment[] = [];
 
-export const activities: ActivityItem[] = [
-  { id: "a1", kind: "approved", title: "Iuran Kas RT Disetujui", description: "Ibu Maya (A1/04) kwitansi resmi otomatis terkirim.", meta: "14:40 WIB • oleh Bpk. Bambang" },
-  { id: "a2", kind: "reminder", title: "Pengingat Tagihan Otomatis", description: "WhatsApp bot berhasil menjangkau 8 nomor kepala keluarga.", meta: "11:00 WIB • Sistem GateLand" },
-  { id: "a3", kind: "new-resident", title: "Warga Baru Terdaftar", description: "Bpk. Dimas Pratama (Blok D1/02) telah mengaktifkan akun mobile.", meta: "09:15 WIB • Mandiri" },
-  { id: "a4", kind: "new-resident", title: "Warga Baru Terdaftar", description: "Bpk. Dimas Pratama (Blok D1/02) telah mengaktifkan akun mobile.", meta: "09:15 WIB • Mandiri" },
-  { id: "a5", kind: "announcement", title: "Pengumuman Terbit", description: "\"Jadwal Penjemputan Sampah Daur Ulang Setiap Kamis Pagi\".", meta: "Kemarin, 19:30 WIB" },
-];
+export const activities: ActivityItem[] = [];
 
 export const budgetItems: BudgetItem[] = [
   {
     id: "b1",
     name: "Keamanan & Satpam Pos",
-    description: "Honor 2 personel, shift siang & malam",
-    amount: 7_000_000,
+    description: "Alokasi operasional keamanan gerbang & patroli",
+    amount: 0,
     share: 45,
     tone: "primary",
-    statusLabel: "Terbayar Terjadwal (Tgl 25)",
+    statusLabel: "Proyeksi 45% Kas Masuk",
     statusTone: "green",
   },
   {
     id: "b2",
     name: "Kebersihan & Angkut Sampah",
-    description: "Retribusi armada sampah 3x seminggu & taman RT",
-    amount: 6_000_000,
+    description: "Retribusi armada sampah & kebersihan lingkungan",
+    amount: 0,
     share: 35,
     tone: "secondary",
-    statusLabel: "Tercukupi Penuh",
+    statusLabel: "Proyeksi 35% Kas Masuk",
     statusTone: "purple",
   },
   {
     id: "b3",
     name: "Dana Sosial & Perawatan",
-    description: "Lampu jalan, santunan warga, kas cadangan",
-    amount: 2_000_000,
+    description: "Perawatan fasilitas umum & dana cadangan klaster",
+    amount: 0,
     share: 20,
     tone: "rose",
-    statusLabel: "Masuk Kas Abadi",
+    statusLabel: "Proyeksi 20% Kas Masuk",
     statusTone: "pink",
   },
 ];
 
 /* ======================= PENGHUNI ======================= */
 
-export const residentTotals = { all: 72 };
+export const residentTotals = { all: 0 };
 
-export const residents: Resident[] = [
-  {
-    id: "r1", name: "Ibu Ghaida", phone: "0812-9845-1122", block: "Blok A2", number: "No. 05",
-    memberCount: 4, memberSummary: "Suami, Istri, 2 Anak", status: "aktif",
-    payment: { state: "lunas", label: "Lunas (Sep 2026)" },
-  },
-  {
-    id: "r2", name: "Ibu Alisha Nayara", phone: "0812-9845-1122", block: "Blok B3", number: "No. 01",
-    memberCount: 4, memberSummary: "Suami, Istri, 2 Anak", status: "aktif",
-    payment: { state: "belum_lunas", label: "Belum Lunas (1 Bln)" },
-  },
-  {
-    id: "r3", name: "Ibu Azizah Pratama", phone: "0812-9845-1122", block: "Blok A1", number: "No. 07",
-    memberCount: 4, memberSummary: "Suami, Istri, 2 Anak", status: "aktif",
-    payment: { state: "lunas", label: "Lunas (Sep 2026)" },
-    detail: {
-      ownership: "Pemilik Tetap",
-      address: "Blok A2 No. 05 • Jl. Gardenia Raya (RT 04 / RW 08)",
-      email: "hendra.kusuma@email.com",
-      since: "14 Januari 2021",
-      tenure: "5+ Thn",
-      members: [
-        { name: "Bpk. Hendra Kusuma", role: "Kepala Keluarga" },
-        { name: "Ibu Azizah Pratama", role: "Istri" },
-        { name: "Kevin Kusuma", role: "Anak (Pelajar)" },
-        { name: "Alisha Kusuma", role: "Anak (Balita)" },
-      ],
-      emergencyContact: { name: "Bpk. Hendra Kusuma (Suami)", phone: "0812-9845-9900" },
-      vehicles: [
-        { name: "Toyota Innova Zenix", label: "Mobil 1", plate: "B 1420 GTL", rfid: "#RFID-0482" },
-        { name: "Honda Vario 160", label: "Motor 1", plate: "B 4912 SFD", rfid: "#RFID-0483" },
-      ],
-      ipl: {
-        period: "September 2026",
-        amountPaid: 175_000,
-        method: "QRIS Otomatis (01 Sep 2026)",
-        compliance: "100% On-Time (12 Bulan)",
-        components: [
-          { label: "Kebersihan & Angkut Sampah", amount: 60_000 },
-          { label: "Keamanan Klaster 24 Jam", amount: 90_000 },
-          { label: "Kas Sosial & Taman", amount: 25_000 },
-        ],
-        arrears: 0,
-        nextBill: "01 Oktober 2026",
-      },
-    },
-  },
-  {
-    id: "r4", name: "Ibu Siti Wahyuni", phone: "0812-9845-1122", block: "Blok B2", number: "No. 04",
-    memberCount: 4, memberSummary: "Suami, Istri, 2 Anak", status: "aktif",
-    payment: { state: "lunas", label: "Lunas (Sep 2026)" },
-  },
-  {
-    id: "r5", name: "Ibu Cathleen", phone: "0812-9845-1122", block: "Blok A2", number: "No. 05",
-    memberCount: 4, memberSummary: "Suami, Istri, 2 Anak", status: "baru_registrasi",
-    payment: { state: "menunggu_verifikasi", label: "Menunggu Verifikasi" },
-  },
-];
+export const residents: Resident[] = [];
 
 export const unitOptions = [
-  { value: "A1-07", label: "Blok A1 No. 07 – Jl. Sekar Indah" },
-  { value: "A2-05", label: "Blok A2 No. 05 – Jl. Sekar Indah" },
-  { value: "B2-09", label: "Blok B2 No. 09 – Jl. Boulevard Barat" },
-  { value: "C1-02", label: "Blok C1 No. 02 – Jl. Gardenia Utama" },
+  { value: "A1-01", label: "Cluster GateLand - Blok A1 No. 01" },
+  { value: "A2-05", label: "Cluster GateLand - Blok A2 No. 05" },
+  { value: "B2-09", label: "Cluster GateLand - Blok B2 No. 09" },
+  { value: "B6-08", label: "Cluster GateLand - Blok B6 Unit 8" },
+  { value: "C1-02", label: "Cluster GateLand - Blok C1 No. 02" },
 ];
 
 /* ======================= IURAN ======================= */
 
 export const iuranSummary = {
-  periodTarget: 45_000_000,
-  periodCollected: 42_850_000,
-  totalKK: 72,
+  periodTarget: 0,
+  periodCollected: 0,
+  totalKK: 0,
 };
 
 export const iuranPosts: IuranPost[] = [
   {
     id: "i1", title: "Iuran Kebersihan & Pengangkutan Sampah", icon: "trash", accent: "indigo",
-    description: "Pengangkutan 3x seminggu oleh DLH, perawatan tong sampah klaster & sanitasi gorong-gorong.",
+    description: "Pengangkutan rutin oleh petugas kebersihan, perawatan tempat sampah klaster & sanitasi gorong-gorong.",
     badges: [{ label: "Wajib", tone: "indigo" }, { label: "Aktif", tone: "green" }],
-    price: 50_000, priceUnit: "/ bulan / KK", active: true,
+    price: 50_000, priceUnit: "/ bulan / penghuni", active: true,
     details: [
-      { label: "Sasaran Tagihan", value: "72 KK (Semua)" },
-      { label: "Jatuh Tempo", value: "Tgl 10 Tiap Bulan" },
-      { label: "Terkumpul Bln Ini", value: "56 / 72 KK (98%)", positive: true },
+      { label: "Sasaran Tagihan", value: "0 Penghuni" },
+      { label: "Jatuh Tempo", value: "Sesuai Batas Waktu" },
+      { label: "Terkumpul Bln Ini", value: "0 / 0 Penghuni (0%)", positive: false },
       { label: "Metode Bayar", value: "QRIS / Transfer" },
     ],
     actions: [{ label: "Edit Tarif", icon: "edit" }, { label: "Rincian", icon: "eye" }],
   },
   {
     id: "i2", title: "Iuran Keamanan & Portal Barrier Gate 24 Jam", icon: "shield", accent: "indigo",
-    description: "Gaji 2 personil satpam regu siang & malam dan CCTV.",
+    description: "Operasional petugas keamanan regu siang & malam serta pemeliharaan kamera CCTV klaster.",
     badges: [{ label: "Wajib Hunian", tone: "indigo" }, { label: "Aktif", tone: "green" }],
     price: 100_000, priceUnit: "/ bulan / unit", active: true,
     details: [
-      { label: "Sasaran Tagihan", value: "72 Unit Dihuni" },
-      { label: "Jatuh Tempo", value: "Tgl 10 Tiap Bulan" },
-      { label: "Terkumpul Bln Ini", value: "56 / 72 KK (96%)", positive: true },
+      { label: "Sasaran Tagihan", value: "0 Penghuni" },
+      { label: "Jatuh Tempo", value: "Sesuai Batas Waktu" },
+      { label: "Terkumpul Bln Ini", value: "0 / 0 Penghuni (0%)", positive: false },
       { label: "Metode Bayar", value: "QRIS / Transfer" },
     ],
     actions: [{ label: "Edit Tarif", icon: "edit" }, { label: "Rincian", icon: "eye" }],
   },
   {
-    id: "i3", title: "Iuran Kas RT & Sosial Paguyuban", icon: "users", accent: "indigo",
-    description: "Dana darurat kemalangan duka warga, santunan sakit, rapat warga berkala & konsumsi kerja bakti.",
+    id: "i3", title: "Iuran Kas & Sosial Paguyuban", icon: "users", accent: "indigo",
+    description: "Dana darurat sosial warga, santunan, rapat warga berkala & konsumsi kegiatan lingkungan.",
     badges: [{ label: "Wajib", tone: "indigo" }, { label: "Aktif", tone: "green" }],
-    price: 25_000, priceUnit: "/ bulan / KK", active: true,
+    price: 25_000, priceUnit: "/ bulan / penghuni", active: true,
     details: [
-      { label: "Sasaran Tagihan", value: "72 KK (Semua)" },
-      { label: "Jatuh Tempo", value: "Tgl 10 Tiap Bulan" },
-      { label: "Terkumpul Bln Ini", value: "56 / 72 KK (94.6%)", positive: true },
-      { label: "Kas Cadangan", value: "Rp 34.200.000" },
+      { label: "Sasaran Tagihan", value: "0 Penghuni" },
+      { label: "Jatuh Tempo", value: "Sesuai Batas Waktu" },
+      { label: "Terkumpul Bln Ini", value: "0 / 0 Penghuni (0%)", positive: false },
+      { label: "Kas Cadangan", value: "Rp 0" },
     ],
     actions: [{ label: "Edit Tarif", icon: "edit" }, { label: "Rincian", icon: "eye" }],
-  },
-  {
-    id: "i4", title: "Perbaikan Paving Blok Sektor Barat", icon: "wrench", accent: "rose",
-    description: "Penataan ulang drainase dan perkerasan paving blok ambles di jalan utama Blok B & Blok C.",
-    badges: [{ label: "Insidental", tone: "rose" }, { label: "Berjalan", tone: "green" }],
-    price: 50_000, priceUnit: "/ Sekali Bayar",
-    progress: {
-      collected: 3_450_000, target: 3_600_000, paidKK: 126,
-      period: "Periode: 1 Agustus - 25 Oktober 2026", unpaidNote: "Sisa 3 KK Belum Transfer",
-    },
-    actions: [{ label: "Edit Target", icon: "edit" }, { label: "Kirim Pengingat", icon: "bell" }],
   },
 ];
 
 /* ======================= LAPORAN ======================= */
 
 export const laporanSummary = {
-  period: "September 2026",
-  cashIn: 42_850_000,
-  allocations: 31_420_000,
-  cashBalance: 148_650_000,
+  period: "November 2026",
+  cashIn: 0,
+  allocations: 0,
+  cashBalance: 0,
 };
 
 export const allocationBreakdown = [
-  { id: "al1", name: "Keamanan & Pos Satpam 24 Jam", description: "Honor 4 Personil + Servis Boom Gate RFID", amount: 15_000_000 },
-  { id: "al2", name: "Kebersihan & Angkut Sampah DLH", description: "Retribusi truk kontainer sampah 3x seminggu", amount: 7_500_000 },
-  { id: "al3", name: "Kas Sosial & Rapat Warga", description: "Santunan kedukaan & logistik musyawarah RT", amount: 3_750_000 },
+  {
+    id: "al-sample",
+    name: "Contoh: Keamanan & Pos Satpam 24 Jam",
+    description: "Contoh alokasi beban operasional keamanan gerbang & patroli (belum ada beban kas terealisasi).",
+    amount: 0,
+  },
 ];
 
 export const posRealizations: PosRealization[] = [
-  { id: "x1", name: "Kebersihan & Sampah Lingkungan", tariffLabel: "150 KK (Rp 50rb/KK)", target: 7_500_000, collected: 7_500_000, paidKK: 150, totalKK: 150, statusLabel: "100% Tercapai", statusTone: "green" },
-  { id: "x2", name: "Keamanan, Sekuriti & Barrier RFID", tariffLabel: "150 KK (Rp 100rb/KK)", target: 15_000_000, collected: 14_400_000, paidKK: 144, totalKK: 150, statusLabel: "96% Berjalan", statusTone: "indigo" },
-  { id: "x3", name: "Kas Paguyuban & Kesejahteraan Sosial", tariffLabel: "150 KK (Rp 25rb/KK)", target: 3_750_000, collected: 3_550_000, paidKK: 142, totalKK: 150, statusLabel: "94.6% Tertib", statusTone: "indigo" },
-  { id: "x4", name: "Iuran Insidental Kerapihan Paving Lapangan", tariffLabel: "150 KK (Rp 75rb/KK)", target: 11_250_000, collected: 9_450_000, paidKK: 126, totalKK: 150, statusLabel: "84% Insidental", statusTone: "rose" },
+  {
+    id: "x-sample",
+    name: "Contoh: Kebersihan & Keamanan Lingkungan",
+    tariffLabel: "0 Penghuni (Rp 175rb/penghuni)",
+    target: 0,
+    collected: 0,
+    paidKK: 0,
+    totalKK: 0,
+    statusLabel: "Contoh Pos (Belum Ada Tagihan)",
+    statusTone: "gray",
+  },
 ];
 
 export const transactions: Transaction[] = [
-  { id: "KWT/2026/09/OUT-842", date: "25 Sep 2026, 09:15", description: "Honor Gaji 4 Petugas Satpam Shift Pagi & Malam", post: "Keamanan Lingkungan", account: "BCA Rekening Kas RT", amount: -12_000_000, verification: "Sah (Biro Fin)" },
-  { id: "KWT/2026/09/OUT-841", date: "22 Sep 2026, 14:10", description: "Penggantian 6 Unit Lampu LED Sorot PJU Blok B3", post: "Listrik & Fasilitas Umum", account: "Petty Cash Tunai RT", amount: -1_150_000, verification: "Sah (Biro Fin)" },
-  { id: "KWT/2026/09/OUT-840", date: "18 Sep 2026, 10:30", description: "Pembayaran Termin 1 Kontrak Truk Sampah DLH", post: "Kebersihan Lingkungan", account: "BCA Rekening Kas RT", amount: -3_750_000, verification: "Sah (Biro Fin)" },
+  {
+    id: "CONTOH/2026/11/001",
+    date: "Contoh • Nov 2026",
+    description: "Contoh entri mutasi kas masuk / beban operasional Cluster GateLand",
+    post: "Contoh Format Mutasi",
+    account: "Kas Cluster GateLand",
+    amount: 0,
+    verification: "Contoh Data",
+  },
 ];
 
 /* ======================= HELPER MUTASI DATA IURAN ======================= */
@@ -252,8 +192,8 @@ export function addIuranPost(newPostData: {
 }) {
   const newId = `i${iuranPosts.length + 1}_${Date.now()}`;
   
-  let sasaranText = "72 KK (Semua)";
-  if (newPostData.sasaran === "dihuni") sasaranText = "72 Unit Dihuni";
+  let sasaranText = "Semua Penghuni Terdaftar";
+  if (newPostData.sasaran === "dihuni") sasaranText = "Semua Unit Dihuni";
   else if (newPostData.sasaran === "blok" && newPostData.selectedBlocks) {
     try {
       const blocks: string[] = JSON.parse(newPostData.selectedBlocks);
@@ -285,12 +225,12 @@ export function addIuranPost(newPostData: {
       { label: "Aktif", tone: "green" },
     ],
     price: newPostData.nominal,
-    priceUnit: newPostData.frekuensiType === "sekali" ? "/ Sekali Bayar" : "/ bulan / KK",
+    priceUnit: newPostData.frekuensiType === "sekali" ? "/ Sekali Bayar" : "/ bulan / penghuni",
     active: true,
     details: [
       { label: "Sasaran Tagihan", value: sasaranText },
       { label: "Jatuh Tempo", value: formattedJatuhTempo },
-      { label: "Terkumpul Bln Ini", value: "0 / 72 KK (0%)", positive: false },
+      { label: "Terkumpul Bln Ini", value: "0 Penghuni (0%)", positive: false },
       { label: "Metode Bayar", value: "QRIS / Transfer" },
     ],
     actions: [
@@ -301,6 +241,33 @@ export function addIuranPost(newPostData: {
 
   // Tambahkan ke array global iuranPosts di posisi atas
   iuranPosts.unshift(newPost);
+}
+
+export function updateIuranPost(
+  id: string,
+  updates: {
+    title?: string;
+    description?: string;
+    price?: number;
+    priceUnit?: string;
+    active?: boolean;
+  },
+) {
+  const target = iuranPosts.find((p) => p.id === id);
+  if (!target) return null;
+  if (updates.title !== undefined) target.title = updates.title;
+  if (updates.description !== undefined) target.description = updates.description;
+  if (updates.price !== undefined) target.price = updates.price;
+  if (updates.priceUnit !== undefined) target.priceUnit = updates.priceUnit;
+  if (updates.active !== undefined) {
+    target.active = updates.active;
+    target.badges = target.badges.map((b) =>
+      b.label === "Aktif" || b.label === "Nonaktif"
+        ? { label: updates.active ? "Aktif" : "Nonaktif", tone: updates.active ? "green" : "gray" }
+        : b,
+    );
+  }
+  return target;
 }
 
 /* ======================= DATA & MUTASI PENGUMUMAN ======================= */
@@ -314,40 +281,17 @@ export interface AnnouncementItem {
   targetMeta: string;
   readMeta: string;
   badgeTone: "green" | "indigo" | "rose";
+  dbId?: number | string;
+  content?: string;
+  location?: string;
+  eventDate?: string;
+  eventTime?: string;
+  targetWarga?: string;
+  authorName?: string;
+  urgency?: string;
 }
 
-export const announcements: AnnouncementItem[] = [
-  {
-    id: "ann-1",
-    category: "Kebersihan & Lingkungan",
-    categoryBadge: "Aktif / Terbit",
-    title: "Jadwal Penjemputan Sampah Daur Ulang Setiap Kamis Pagi",
-    dateMeta: "Kemarin, 19:30 WIB • oleh Bpk. Bambang",
-    targetMeta: "Target: Semua Warga (72 KK)",
-    readMeta: "Dibaca 68 warga",
-    badgeTone: "green",
-  },
-  {
-    id: "ann-2",
-    category: "Agenda Warga",
-    categoryBadge: "Tersemat / Pinned",
-    title: "Kerja Bakti Lingkungan & Pengecatan Gapura Klaster",
-    dateMeta: "Minggu, 15 Ags 2026 • 07:00 WIB",
-    targetMeta: "Area Gapura Utama & Pos Satpam",
-    readMeta: "Dibaca 72 warga",
-    badgeTone: "indigo",
-  },
-  {
-    id: "ann-3",
-    category: "Keuangan & Iuran",
-    categoryBadge: "Jatuh Tempo: 10 September",
-    title: "Pengingat Pembayaran Iuran Bulan September 2026",
-    dateMeta: "Diterbitkan: 1 Sep 2026 • Sistem GateLand",
-    targetMeta: "142 dari 150 KK telah membayar",
-    readMeta: "Dibaca 70 warga",
-    badgeTone: "rose",
-  },
-];
+export const announcements: AnnouncementItem[] = [];
 
 export function addAnnouncement(data: { judul: string; kategori: string; lokasi?: string }) {
   const newAnn: AnnouncementItem = {
@@ -356,8 +300,8 @@ export function addAnnouncement(data: { judul: string; kategori: string; lokasi?
     categoryBadge: "Baru Terbit",
     title: data.judul,
     dateMeta: `Baru saja • oleh Admin`,
-    targetMeta: data.lokasi ? `Lokasi: ${data.lokasi}` : "Target: Seluruh Warga RT 04",
-    readMeta: "Dibaca 1 warga",
+    targetMeta: data.lokasi ? `Lokasi: ${data.lokasi}` : "Target: Seluruh Warga GateLand",
+    readMeta: "Terkirim ke Warga",
     badgeTone: "indigo",
   };
   announcements.unshift(newAnn);
