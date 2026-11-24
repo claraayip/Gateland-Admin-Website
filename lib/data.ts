@@ -19,8 +19,7 @@ export const currentUser = {
   location: "Cluster GateLand",
 };
 
-/* ======================= DASHBOARD ======================= */
-
+// Dashboard
 export const dashboardSummary: DashboardSummary = {
   period: "November 2026",
   collected: 0,
@@ -70,8 +69,7 @@ export const budgetItems: BudgetItem[] = [
   },
 ];
 
-/* ======================= PENGHUNI ======================= */
-
+// Penghuni
 export const residentTotals = { all: 0 };
 
 export const residents: Resident[] = [];
@@ -84,8 +82,7 @@ export const unitOptions = [
   { value: "C1-02", label: "Cluster GateLand - Blok C1 No. 02" },
 ];
 
-/* ======================= IURAN ======================= */
-
+// Iuran
 export const iuranSummary = {
   periodTarget: 0,
   periodCollected: 0,
@@ -134,8 +131,7 @@ export const iuranPosts: IuranPost[] = [
   },
 ];
 
-/* ======================= LAPORAN ======================= */
-
+// Laporan
 export const laporanSummary = {
   period: "November 2026",
   cashIn: 0,
@@ -178,8 +174,7 @@ export const transactions: Transaction[] = [
   },
 ];
 
-/* ======================= HELPER MUTASI DATA IURAN ======================= */
-
+// Helper mutasi data iuran
 export function addIuranPost(newPostData: {
   namaIuran: string;
   nominal: number;
@@ -270,8 +265,7 @@ export function updateIuranPost(
   return target;
 }
 
-/* ======================= DATA & MUTASI PENGUMUMAN ======================= */
-
+// Data & mutasi pengumuman
 export interface AnnouncementItem {
   id: string;
   category: string;

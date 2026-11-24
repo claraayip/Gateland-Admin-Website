@@ -1,8 +1,8 @@
-/* ---------- Umum ---------- */
+// Umum
 export type BadgeTone = "indigo" | "green" | "rose" | "pink" | "red" | "darkred" | "purple" | "gray";
 export type AvatarTone = "navy" | "blue" | "purple" | "pink";
 
-/* ---------- Dashboard ---------- */
+// Dashboard
 export type PaymentChannel = "BCA Transfer" | "BRI Transfer" | "BSI Transfer" | "QRIS GateLand";
 
 export interface DashboardSummary {
@@ -52,7 +52,7 @@ export interface BudgetItem {
   statusTone: BadgeTone;
 }
 
-/* ---------- Penghuni ---------- */
+// Penghuni
 export type ResidentStatus = "aktif" | "baru_registrasi";
 export type PaymentState = "lunas" | "belum_lunas" | "menunggu_verifikasi" | "belum_ada_tagihan";
 
@@ -101,7 +101,7 @@ export interface Resident {
   detail?: ResidentDetail; // belum tersedia untuk semua warga
 }
 
-/* ---------- Iuran ---------- */
+// Iuran
 export type IuranIcon = "trash" | "shield" | "users" | "wrench";
 
 export interface IuranPost {
@@ -119,7 +119,7 @@ export interface IuranPost {
   active?: boolean; // menampilkan switch aktif/nonaktif
 }
 
-/* ---------- Laporan ---------- */
+// Laporan
 export interface PosRealization {
   id: string;
   name: string;

@@ -219,7 +219,7 @@ export function AnnouncementHistoryCard({
         )}
       </div>
 
-      {/* ─── MODAL DETAIL PENGUMUMAN ─── */}
+      {/* Modal Detail Pengumuman */}
       <Modal
         open={selectedDetail !== null}
         onClose={() => setSelectedDetail(null)}
@@ -294,7 +294,7 @@ export function AnnouncementHistoryCard({
         )}
       </Modal>
 
-      {/* ─── MODAL KELOLA PENGUMUMAN (EDIT & HAPUS) ─── */}
+      {/* Modal Kelola Pengumuman */}
       <Modal
         open={selectedManage !== null}
         onClose={() => setSelectedManage(null)}

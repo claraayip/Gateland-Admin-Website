@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Login Admin - GateLand" };
 export default function LoginPage() {
   return (
     <main className="grid min-h-screen w-full grid-cols-1 bg-white font-sans lg:grid-cols-12">
-      {/* ─── Sisi Kiri: Branding & Informasi Cluster (Navy Blue) ─── */}
+      {/* Branding & Informasi Cluster */}
       <section className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gradient-to-b from-[#090877] via-[#07066C] to-[#040356] px-8 py-12 sm:px-12 sm:py-16 lg:col-span-5 lg:px-14 xl:col-span-6 text-white">
         {/* Subtle Ambient Glow */}
         <div aria-hidden="true" className="pointer-events-none absolute -top-24 -left-24 size-96 rounded-full bg-blue-500/15 blur-3xl" />
@@ -47,7 +47,7 @@ export default function LoginPage() {
         </div>
       </section>
 
-      {/* ─── Sisi Kanan: Form Login Admin (Clean White) ─── */}
+      {/* Form Login Admin */}
       <section className="flex min-h-screen flex-col justify-center bg-white px-8 py-12 sm:px-12 sm:py-16 lg:col-span-7 lg:px-16 xl:col-span-6">
         <div className="mx-auto w-full max-w-md">
           {/* Badge Portal Resmi */}

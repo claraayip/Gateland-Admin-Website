@@ -37,7 +37,11 @@ export async function loginAdminAction(
 
     if (!res.ok || body.status !== "success") {
       return {
-        message: body.message || "Email atau kata sandi salah.",
+        message:
+          body.message ||
+          (res.status === 401 || res.status === 403
+            ? "Email atau kata sandi salah."
+            : `Server login tidak merespons dengan benar (HTTP ${res.status}). Pastikan backend berjalan di port 3000 dan admin di port 3001.`),
       };
     }
 

@@ -25,14 +25,12 @@ export function LoginForm() {
       }}
       className="space-y-4"
     >
-      {/* ─── Notifikasi Error dari Server / Autentikasi ─── */}
       {state?.message && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-3.5 text-xs font-semibold text-red-600">
           {state.message}
         </div>
       )}
 
-      {/* ─── Field: Email Pengelola / Admin ─── */}
       <div>
         <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-slate-800 mb-1.5">
           Email Pengelola / Admin
@@ -59,7 +57,6 @@ export function LoginForm() {
         )}
       </div>
 
-      {/* ─── Field: Kata Sandi ─── */}
       <div>
         <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-slate-800 mb-1.5">
           Kata Sandi
@@ -99,7 +96,6 @@ export function LoginForm() {
         )}
       </div>
 
-      {/* ─── Tombol Submit Masuk Dashboard ─── */}
       <button
         type="submit"
         disabled={isPending}
