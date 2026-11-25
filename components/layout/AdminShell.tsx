@@ -1,11 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 import { cn } from "@/lib/cn";
 
 export function AdminShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const isLoginPage = pathname === "/login";
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -13,6 +16,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
   // Sinkronisasi status autentikasi antara cookie server dan local storage
   useEffect(() => {
+    if (isLoginPage) return;
+
     const hasCookie = typeof document !== "undefined" && document.cookie.includes("gateland_token=");
     const hasLocal = typeof window !== "undefined" && !!localStorage.getItem("gateland_token");
 
@@ -27,7 +32,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
     // Jika tidak ada bukti autentikasi, arahkan kembali ke login
     window.location.replace("/");
-  }, []);
+  }, [isLoginPage]);
 
   const openMobile = useCallback(() => setMobileOpen(true), []);
   const closeMobile = useCallback(() => setMobileOpen(false), []);
@@ -56,6 +61,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
       desktop.removeEventListener("change", handleResize);
     };
   }, [mobileOpen]);
+
+  if (isLoginPage) return <>{children}</>;
 
   if (isCheckingAuth || !isAuthorized) {
     return null;

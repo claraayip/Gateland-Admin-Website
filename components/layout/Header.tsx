@@ -5,8 +5,8 @@ import { Megaphone, Menu, PanelLeftClose, PanelLeftOpen, Plus, Search, User } fr
 import { usePathname, useRouter } from "next/navigation";
 import { getHeaderAction } from "@/lib/navigation";
 import { Modal } from "@/components/ui/Modal";
-import { BuatIuranForm } from "@/components/forms/BuatIuranForm";
-import { BuatPengumumanForm } from "@/components/forms/BuatPengumumanForm";
+import { BuatIuranForm } from "@/app/(admin)/iuran/components/BuatIuranForm";
+import { BuatPengumumanForm } from "@/app/(admin)/pengumuman/components/BuatPengumumanForm";
 
 interface HeaderProps {
   mobileOpen: boolean;

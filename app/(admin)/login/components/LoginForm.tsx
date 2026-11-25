@@ -1,0 +1,48 @@
+"use client";
+
+import { useEffect, useState, useActionState } from "react";
+import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
+
+export type LoginState = {
+  errors?: Record<string, string[] | undefined>;
+  message?: string;
+};
+
+type LoginAction = (prevState: LoginState, formData: FormData) => Promise<LoginState>;
+
+export function LoginForm({ action }: { action: LoginAction }) {
+  const [state, formAction, isPending] = useActionState(action, {});
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (window.location.search) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  return (
+    <form action={formAction} onSubmit={() => localStorage.setItem("gateland_token", "active")} className="space-y-4">
+      {state?.message && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3.5 text-xs font-semibold text-red-600">{state.message}</div>}
+      <div>
+        <label htmlFor="email" className="mb-1.5 block text-xs font-medium text-slate-800 sm:text-sm">Email Pengelola / Admin</label>
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><Mail className="size-5" aria-hidden="true" /></div>
+          <input id="email" name="email" type="email" required defaultValue="admin@gmail.com" placeholder="admin@gmail.com" autoComplete="email" className="w-full rounded-xl border border-transparent bg-[#F3F4FD] py-3.5 pl-11 pr-4 text-sm text-slate-800 placeholder:text-slate-400/80 transition-colors focus:border-[#090877] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#090877]/20" />
+        </div>
+        {state?.errors?.email?.[0] && <p className="mt-1.5 text-xs font-semibold text-red-500">{state.errors.email[0]}</p>}
+      </div>
+      <div>
+        <label htmlFor="password" className="mb-1.5 block text-xs font-medium text-slate-800 sm:text-sm">Kata Sandi</label>
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><Lock className="size-5" aria-hidden="true" /></div>
+          <input id="password" name="password" type={showPassword ? "text" : "password"} required defaultValue="Admin123-" placeholder="••••••••••••" autoComplete="current-password" className="w-full rounded-xl border border-transparent bg-[#F3F4FD] py-3.5 pl-11 pr-11 text-sm text-slate-800 placeholder:text-slate-400/80 transition-colors focus:border-[#090877] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#090877]/20" />
+          <button type="button" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"} aria-pressed={showPassword} className="absolute inset-y-0 right-0 flex cursor-pointer items-center pr-3.5 text-slate-400 transition-colors hover:text-slate-600">{showPassword ? <EyeOff className="size-5" aria-hidden="true" /> : <Eye className="size-5" aria-hidden="true" />}</button>
+        </div>
+        {state?.errors?.password?.[0] && <p className="mt-1.5 text-xs font-semibold text-red-500">{state.errors.password[0]}</p>}
+      </div>
+      <button type="submit" disabled={isPending} className="mt-4 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#06076B] px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#06076B]/20 transition-all duration-200 hover:bg-[#080980] active:bg-[#040552] disabled:opacity-50">
+        <span>{isPending ? "Memproses..." : "Masuk ke Dashboard Admin"}</span>{!isPending && <ArrowRight className="size-4" />}
+      </button>
+    </form>
+  );
+}
